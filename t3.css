@@ -1,0 +1,38 @@
+#t3Table {
+    height: 400px;
+    width: 400px;
+    margin: 0 auto;
+    display: table;
+}
+
+.square {
+    width: 33.33%;
+    height: 33.33%;
+    display: table-cell;
+    border: 5px solid black;
+    box-sizing: border-box;
+}
+
+.innerTable {
+    width: 100%;
+    height: 100%;
+    display: table;
+}
+
+.row {
+    display: table-row;
+    height:33.33%;
+    width: 100%;
+}
+
+.square .cell {
+    width: 33.33%;
+    display: table-cell;
+    border: 1px solid gray;
+    margin: 0px;
+    box-sizing: border-box;
+}
+
+.square .cell:hover:not(.taken) {
+    background-color: yellow;
+}

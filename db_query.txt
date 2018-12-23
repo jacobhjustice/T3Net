@@ -1,0 +1,34 @@
+CREATE TABLE User(
+    ID INT NOT NULL,
+    Username VARCHAR(255),
+    Password VARCHAR(255),
+    PRIMARY KEY(ID)
+);
+
+CREATE TABLE Game(
+    ID INT NOT NULL,
+    Player1 INT NOT NULL,
+    Player2 INT,
+    Turn INT,
+    PRIMARY KEY(ID),
+    FOREIGN KEY(Player1) REFERENCES User(ID),
+    FOREIGN KEY(Player2) REFERENCES User(ID)
+);
+
+CREATE TABLE Square(
+    ID INT NOT NULL,
+    GameID INT NOT NULL,
+    Order INT NOT NULL,
+    Owner INT,
+    PRIMARY KEY(ID),
+    FOREIGN KEY(GameID) REFERENCES Game(ID)
+);
+
+CREATE TABLE Cell(
+    ID INT NOT NULL,
+    SquareID INT NOT NULL,
+    Order INT NOT NULL,
+    Owner INT,
+    PRIMARY KEY(ID),
+    FOREIGN KEY (SquareID) REFERENCES(Square)
+);
