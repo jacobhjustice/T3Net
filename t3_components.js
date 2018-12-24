@@ -1,11 +1,12 @@
 var component = {
-    Game: function(ID, Player1, Player2, Turn, Squares, NextSquare) {
+    Game: function(ID, Player1, Player2, Turn, Squares, NextSquare, Winner) {
         this.id = ID;
         this.player1 = Player1;
         this.player2 = Player2;
         this.turn = Turn;
         this.squares = Squares != undefined ? Squares : [];
         this.nextSquare = NextSquare;
+        this.winner = Winner;
     },
     
     BindGameFunctions: function() {

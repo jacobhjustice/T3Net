@@ -3,7 +3,7 @@ var t3 = {
     User: undefined,
     // Create new user
     initializeUser: function() {
-        var name = "TEST";
+        var name = "Player 1";
         var nextID = 1;
         // Should create on backend and send results
         var user = new component.User(nextID, name, "X");
@@ -17,7 +17,7 @@ var t3 = {
 
         // Create on backend, return results
         var game_id = 0;
-        var dummyUser = new component.User(2, "TEST2", "O");
+        var dummyUser = new component.User(2, "Player 2", "O");
         this.Game = new component.Game(game_id, t3.User, dummyUser, 0, [], -1);
         for(var i = 0; i < 9; i++) {
             var square_id = i;
@@ -40,20 +40,26 @@ var t3 = {
 
     // selectabeOrder indicates the square index for which selectable class should show up, -1 if any square is selectable
     buildBoard: function() {
+        var isOver = this.Game.winner != undefined;
+        if(!isOver) {
+            document.getElementById("turnText").innerHTML = this.Game.getCurrentPlayer().username +"'s turn!";
+        }
         var html = "<div id = 't3Table'>";
+        
         for(var i = 0; i < 9; i++) {
             html += i % 3 == 0 ? "<div class = 'row'>" : "";
 
             var squareClassList = "square ";
-            var isSelectable = this.Game.nextSquare == -1 || i == this.Game.nextSquare;
+            var isSelectable = (this.Game.nextSquare == -1 || i == this.Game.nextSquare) && !isOver;
             var square = this.Game.squares[i];
 
             // consider just having 2 cases for html += based on square.owner
+            // may still want to show the underlying cells even on square own?
             if(isSelectable) {
-                squareClassList += "selectable ";
-                if(this.Game.nextSquare > -1) {
-                    squareClassList += "current ";
-                }
+                squareClassList += "selectable current ";
+                // if(this.Game.nextSquare > -1) {
+                //     squareClassList += "current ";
+                // }
             }
             if(square.owner != undefined) {
                 squareClassList += "taken "
