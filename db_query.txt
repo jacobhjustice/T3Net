@@ -8,11 +8,15 @@ CREATE TABLE User(
 CREATE TABLE Game(
     ID INT NOT NULL,
     Player1 INT NOT NULL,
-    Player2 INT,
-    Turn INT,
+    Player2 INT NOT NULL,
+    TurnNumber INT,
+    PlayerTurn INT,
+    NextSquare INT,
+    Winner INT,
     PRIMARY KEY(ID),
     FOREIGN KEY(Player1) REFERENCES User(ID),
-    FOREIGN KEY(Player2) REFERENCES User(ID)
+    FOREIGN KEY(Player2) REFERENCES User(ID),
+    FOREIGN KEY(PlayerTurn) REFERENCES User(ID)
 );
 
 CREATE TABLE Square(
