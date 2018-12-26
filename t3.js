@@ -1,12 +1,36 @@
 var t3 = {
     Game: undefined,
     User: undefined,
+
+    callServer: function(func, callback, paramArray) {
+
+        http = new XMLHttpRequest();
+    
+        http.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status < 500) {
+                if (typeof callback == "function" && callback != undefined) {
+                    callback(this.responseText);
+                }
+            }
+        };
+    
+        var url = "server_requests.php?FUNCTION=" + func;
+        if(paramArray != undefined) {
+            for(var i = 0; i < paramArray.length - 1; i += 2) {
+                url += "&" + paramArray[i] + "=" + paramArray [i+1];
+            }
+        }
+    
+        http.open("GET", url, true); 
+        http.send();
+    },
+
     // Create new user
     initializeUser: function() {
         var name = "Player 1";
         var nextID = 1;
         // Should create on backend and send results
-        var user = new component.User(nextID, name, "X");
+        var user = new component.Account(nextID, name, "X");
         this.User = user;
     },
 
@@ -17,7 +41,7 @@ var t3 = {
 
         // Create on backend, return results
         var game_id = 0;
-        var dummyUser = new component.User(2, "Player 2", "O");
+        var dummyUser = new component.Account(2, "Player 2", "O");
         this.Game = new component.Game(game_id, t3.User, dummyUser, 0, [], -1);
         for(var i = 0; i < 9; i++) {
             var square_id = i;

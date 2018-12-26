@@ -1,12 +1,12 @@
-CREATE TABLE User(
-    ID INT NOT NULL,
+CREATE TABLE Account(
+    ID INT NOT NULL AUTO_INCREMENT,
     Username VARCHAR(255),
     Password VARCHAR(255),
     PRIMARY KEY(ID)
 );
 
 CREATE TABLE Game(
-    ID INT NOT NULL,
+    ID INT NOT NULL AUTO_INCREMENT,
     Player1 INT NOT NULL,
     Player2 INT NOT NULL,
     TurnNumber INT,
@@ -14,25 +14,25 @@ CREATE TABLE Game(
     NextSquare INT,
     Winner INT,
     PRIMARY KEY(ID),
-    FOREIGN KEY(Player1) REFERENCES User(ID),
-    FOREIGN KEY(Player2) REFERENCES User(ID),
-    FOREIGN KEY(PlayerTurn) REFERENCES User(ID)
+    FOREIGN KEY(Player1) REFERENCES Account(ID),
+    FOREIGN KEY(Player2) REFERENCES Account(ID),
+    FOREIGN KEY(PlayerTurn) REFERENCES Account(ID)
 );
 
 CREATE TABLE Square(
-    ID INT NOT NULL,
+    ID INT NOT NULL AUTO_INCREMENT,
     GameID INT NOT NULL,
-    Order INT NOT NULL,
+    LocalOrder INT NOT NULL,
     Owner INT,
     PRIMARY KEY(ID),
     FOREIGN KEY(GameID) REFERENCES Game(ID)
 );
 
 CREATE TABLE Cell(
-    ID INT NOT NULL,
+    ID INT NOT NULL AUTO_INCREMENT,
     SquareID INT NOT NULL,
-    Order INT NOT NULL,
+    LocalOrder INT NOT NULL,
     Owner INT,
     PRIMARY KEY(ID),
-    FOREIGN KEY (SquareID) REFERENCES(Square)
+    FOREIGN KEY (SquareID) REFERENCES Square(ID)
 );

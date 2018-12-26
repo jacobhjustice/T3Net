@@ -34,5 +34,11 @@ var events = {
         }
 
         t3.buildBoard();
+    },
+
+    createUser: function() {
+        t3.callServer("CREATE_USER", function(data) {
+            console.log(data);
+        }, ["USERNAME", "TEST1", "PASSWORD", "PASS"]);
     }
 };

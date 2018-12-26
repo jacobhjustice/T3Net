@@ -15,25 +15,25 @@ var component = {
         }
     },
 
-    User: function(ID, Username, Logo) {
+    Account: function(ID, Username, Logo) {
         this.id = ID;
         this.username = Username;
         this.logo = Logo;
         // Future fields???
     },
 
-    Square: function(ID, GameID, Order, Owner, Cells) {
+    Square: function(ID, GameID, LocalOrder, Owner, Cells) {
         this.id = ID;
         this.gameID = GameID;
-        this.order = Order;
+        this.order = LocalOrder;
         this.owner = Owner;
         this.cells = Cells != undefined ? Cells : []
     },
 
-    Cell: function(ID, SquareID, Order, Owner) {
+    Cell: function(ID, SquareID, LocalOrder, Owner) {
         this.id = ID;
         this.squareID = SquareID;
-        this.order = Order;
+        this.order = LocalOrder;
         this.owner = Owner;
     },
 }
