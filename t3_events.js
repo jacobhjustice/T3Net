@@ -13,6 +13,12 @@ var events = {
                 t3.initializeUser();
                 t3.initializeGame();
                 break;  
+            case 'createConfirm':
+                this.createUser();
+                break;
+            case 'loginConfirm':
+                this.loginUser();
+                break;
             default: 
                 console.log("ERROR: button does not have a handler.");
                 break;
@@ -57,8 +63,30 @@ var events = {
     },
 
     createUser: function() {
+        var username = document.getElementById("createUsername").value;
+        var password = document.getElementById("createPassword").value;
         t3.callServer("CREATE_USER", function(data) {
-            console.log(data);
-        }, ["USERNAME", "TEST1", "PASSWORD", "PASS"]);
+            if(data.ERROR.length > 0) {
+                //handle error
+            } else {
+                var id = data.DATA;
+                var user = new components.Account(id, username);
+                t3.User = user;
+            }
+        }, ["USERNAME", username, "PASSWORD", password]);
+    },
+
+    loginUser: function() {
+        var username = document.getElementById("createUsername").value;
+        var password = document.getElementById("createPassword").value;
+        t3.callServer("AUTHENTICATE_USER", function(data) {
+            if(data.ERROR.length > 0) {
+                //handle error
+            } else {
+                var id = data.DATA;
+                var user = new components.Account(id, username);
+                t3.User = user;
+            }
+        }, ["USERNAME", username, "PASSWORD", password]);
     }
 };

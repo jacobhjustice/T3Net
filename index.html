@@ -19,17 +19,17 @@
         </div>
         <div id = "createMenu" class = "elementGroup">
             <h3>Create Account</h3>
-            <input id = "username" placeholder="Username"/>
-            <input id = "password" type = "password" placeholder="Password"/>
+            <input id = "createUsername" placeholder="Username"/>
+            <input id = "createPassword" type = "password" placeholder="Password"/>
             <div class = "tagline" onclick = "events.onButtonSelect(login)">Already have an account? Click here!</div>
-            <div class = "button confirm">Create</div>
+            <div class = "button confirm" onclick = "events.onButtonSelect(this)" id = "createConfirm">Create</div>
         </div>
         <div id = "loginMenu" class = "elementGroup">
                 <h3>Login</h3>
-                <input id = "username" placeholder="Username"/>
-                <input id = "password" type = "password" placeholder="Password"/>
+                <input id = "loginUsername" placeholder="Username"/>
+                <input id = "loginPassword" type = "password" placeholder="Password"/>
                 <div class = "tagline" onclick = "events.onButtonSelect(create)">Don't have an account? Click here!</div>
-                <div class = "button confirm">Login</div>
+                <div class = "button confirm" onclick = "events.onButtonSelect(this)" id = "loginConfirm">Login</div>
             </div>
         <script>t3.initializeEntry();</script>
     </body>

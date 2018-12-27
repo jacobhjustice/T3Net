@@ -22,6 +22,12 @@
             createUser($con, $name, $pass, $retObj);
             echo json_encode($retObj);
             break;
+        case 'AUTHENTICATE_USER':
+            $name = $_GET['USERNAME'];
+            $pass = $_GET['PASSWORD'];
+            authenticateUser($con, $name, $pass, $retObj);
+            echo json_encode($retObj);
+            break;
         default: 
             echo 'Could not find command';
     }
