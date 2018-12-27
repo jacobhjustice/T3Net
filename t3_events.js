@@ -1,4 +1,25 @@
 var events = {
+    onButtonSelect: function(e) {
+        switch(e.id) {
+            case 'login':
+                t3.hideGroups();
+                document.getElementById("loginMenu").style.display = "block";
+                break;
+            case 'create': 
+                t3.hideGroups();
+                document.getElementById("createMenu").style.display = "block";
+                break;
+            case 'local':
+                t3.initializeUser();
+                t3.initializeGame();
+                break;  
+            default: 
+                console.log("ERROR: button does not have a handler.");
+                break;
+        }
+
+    },
+
     onCellSelect: function(e, game) {
         var cellIndex = parseInt(e.dataset.cellOrder);
         var squareIndex = parseInt(e.dataset.squareOrder);
@@ -29,7 +50,6 @@ var events = {
             (game.squares[rowCheck].owner == player && game.squares[rowCheck + 1].owner == player && game.squares[rowCheck + 2].owner == player) ||
             (game.squares[0].owner == player && game.squares[4].owner == player && game.squares[8].owner == player) ||
             (game.squares[2].owner == player && game.squares[4].owner == player && game.squares[6].owner == player)) {
-            document.getElementById("header").innerHTML = "That's game! The winner is " + player.username;
             game.winner = player;
         }
 

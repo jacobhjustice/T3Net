@@ -25,6 +25,18 @@ var t3 = {
         http.send();
     },
 
+    hideGroups: function() {
+        var elements = document.getElementsByClassName("elementGroup");
+        for(var i = 0; i < elements.length; i++) {
+            elements[i].style.display = "none";
+        }
+    },
+
+    initializeEntry: function() {
+        this.hideGroups();
+        document.getElementById("entryOptions").style.display = "block";
+    },
+
     // Create new user
     initializeUser: function() {
         var name = "Player 1";
@@ -65,10 +77,13 @@ var t3 = {
     // selectabeOrder indicates the square index for which selectable class should show up, -1 if any square is selectable
     buildBoard: function() {
         var isOver = this.Game.winner != undefined;
+        var html = "";
         if(!isOver) {
-            document.getElementById("turnText").innerHTML = this.Game.getCurrentPlayer().username +"'s turn!";
+            html += "<h3 id = 'header'>" + this.Game.getCurrentPlayer().username + "'s Turn! Select any of the highlighted squares!</h3>";
+        } else {
+            html += "<h3 id = 'header'>That's game! The winner is " + this.Game.winner.username + "!</div>"
         }
-        var html = "<div id = 't3Table'>";
+        html += "<div id = 't3Table'>";
         
         for(var i = 0; i < 9; i++) {
             html += i % 3 == 0 ? "<div class = 'row'>" : "";

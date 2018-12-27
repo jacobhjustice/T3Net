@@ -1,18 +1,36 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>T3Net</title>
+        <title>T3.Net</title>
     </head>
     <body>
-        <h3 id = "header"><div id = "turnText"></div> Select any of the highlighted squares!</h3>
+        
         <div id = "content"></div>
         <script src = "t3_components.js"></script>
         <script src = "t3_events.js"></script>
         <script src = "t3.js"></script>
         <link rel = "stylesheet" href= "t3.css"></link>
-        <script>t3.initializeUser(); t3.initializeGame();</script>
-        <div id = "instructions">
-
+        <div id = "entryOptions" class = "elementGroup">
+            <h2>T<div class = "subscript">3</div>.Net</h2>
+            <div class = "button" onclick = "events.onButtonSelect(this)" id = "login">Login</div>
+            <div class = "button" onclick = "events.onButtonSelect(this)" id = "create">Create Account</div>
+            <div class = "button" onclick = "events.onButtonSelect(this)" id = "help">What is T3.Net?</div>
+            <div class = "button" onclick = "events.onButtonSelect(this)" id = "local">Local Play</div>
         </div>
+        <div id = "createMenu" class = "elementGroup">
+            <h3>Create Account</h3>
+            <input id = "username" placeholder="Username"/>
+            <input id = "password" type = "password" placeholder="Password"/>
+            <div class = "tagline" onclick = "events.onButtonSelect(login)">Already have an account? Click here!</div>
+            <div class = "button confirm">Create</div>
+        </div>
+        <div id = "loginMenu" class = "elementGroup">
+                <h3>Login</h3>
+                <input id = "username" placeholder="Username"/>
+                <input id = "password" type = "password" placeholder="Password"/>
+                <div class = "tagline" onclick = "events.onButtonSelect(create)">Don't have an account? Click here!</div>
+                <div class = "button confirm">Login</div>
+            </div>
+        <script>t3.initializeEntry();</script>
     </body>
 </html>
