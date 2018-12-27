@@ -1,6 +1,42 @@
 <?php
-    function createGame($conn, $creatorID, $challengedID) {
+    function createGame($conn, $creatorID, $challengedID, &$retObj) {
+        // TODO TEST, RETURN DATA TO CLIENT
 
+        // Create the game
+        $creatorID = filter_var($creatorID, FILTER_SANITIZE_STRING);
+        $challengedID = filter_var($challengedID, FILTER_SANITIZE_STRING);
+        $query = "INSERT INTO Game (Player1, Player2, PlayerTurn, TurnNumber, NextSquare) VALUES ($creatorID, $challengedID, $creatorID, 0, -1);";
+        $result = mysqli_query($con, $query);        
+        $err = mysqli_error($con);
+        if (strlen($err) > 0) {
+            $retObj->ERROR = $err;
+            return;
+        }
+        $gameID = mysqli_insert_id($con);
+
+        // Create the 9 squares for the game
+        for($i = 0; $i < 9; $i++) {
+            $query = "INSERT INTO Square (GameID, LocalOrder) VALUES ($gameID, $i);";
+            $result = mysqli_query($con, $query);        
+            $err = mysqli_error($con);
+            if (strlen($err) > 0) {
+                $retObj->ERROR = $err;
+                return;
+            }
+            $squareID = mysqli_insert_id($con);
+            // Create each of the cells within the square
+            $query = "";
+            for($o = 0; $o < 9; $o++) {
+                $qurey = $query . " INSERT INTO CELL (SquareID, LocalOrder) VALUES ($squareID, $o); ";
+            }
+            $result = mysqli_query($con, $query);        
+            $err = mysqli_error($con);
+            if (strlen($err) > 0) {
+                $retObj->ERROR = $err;
+                return;
+            }
+            // Need to return local data
+        }
     }
 
     function getLatestMove($conn, $gameID, $turnNum) {
