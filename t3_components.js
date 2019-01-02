@@ -30,9 +30,10 @@ var component = {
         this.cells = Cells != undefined ? Cells : []
     },
 
-    Cell: function(ID, SquareID, LocalOrder, Owner) {
+    Cell: function(ID, SquareID, GameID, LocalOrder, Owner) {
         this.id = ID;
         this.squareID = SquareID;
+        this.gameID = GameID;
         this.order = LocalOrder;
         this.owner = Owner;
     },

@@ -1,10 +1,33 @@
 <?php
-    function createGame($conn, $creatorID, $challengedID, &$retObj) {
-        // TODO TEST, RETURN DATA TO CLIENT
+    function findUser($con, $username, &$retObj) {
+        $username = filter_var($username, FILTER_SANITIZE_STRING);
+        $query = "SELECT ID FROM Account WHERE Username = '$username'";
+        $result = mysqli_query($con, $query);
 
-        // Create the game
+        // Check to make sure username does not exist already
+        $err = mysqli_error($con);
+        if(strlen($err) > 0) {
+            $retObj->ERROR = $err;
+            return;
+        }
+        if($row = mysqli_fetch_row($result)){
+            $retObj->DATA = $row[0];
+            return;
+        }
+        $retObj->ERROR = -1;
+    }
+
+
+// ALL FUNC
+
+    function createGame($con, $creatorID, $challengedID, &$retObj) {
+        // TODO TEST, RETURN DATA TO CLIENT
         $creatorID = filter_var($creatorID, FILTER_SANITIZE_STRING);
         $challengedID = filter_var($challengedID, FILTER_SANITIZE_STRING);
+        
+
+
+        // Create the game
         $query = "INSERT INTO Game (Player1, Player2, PlayerTurn, TurnNumber, NextSquare) VALUES ($creatorID, $challengedID, $creatorID, 0, -1);";
         $result = mysqli_query($con, $query);        
         $err = mysqli_error($con);
@@ -13,6 +36,16 @@
             return;
         }
         $gameID = mysqli_insert_id($con);
+        $retObj->DATA = (object) [
+            'ID' => $gameID,
+            'Player1' => $creatorID,
+            'Player2' => $challengedID,
+            'PlayerTurn' => $creatorID,
+            'TurnNumber' => 0,
+            'NextSquare' => -1,
+            'Squares' => array(),
+            'Winner' => null,
+        ];
 
         // Create the 9 squares for the game
         for($i = 0; $i < 9; $i++) {
@@ -24,18 +57,42 @@
                 return;
             }
             $squareID = mysqli_insert_id($con);
+
+            $squareObject = (object)[
+                'ID' => $squareID,
+                'GameID' => $gameID,
+                'LocalOrder' => $i,
+                'Owner' => null,
+                'Cells' => array()
+            ];
+            array_push($retObj->DATA->Squares, $squareObject);
+
             // Create each of the cells within the square
-            $query = "";
+            $query = " INSERT INTO Cell (SquareID, GameID, LocalOrder) VALUES ";
             for($o = 0; $o < 9; $o++) {
-                $qurey = $query . " INSERT INTO CELL (SquareID, LocalOrder) VALUES ($squareID, $o); ";
+                $query .= "($squareID, $gameID, $o)";
+                if($o != 8) {
+                    $query .= ", ";
+                }
             }
-            $result = mysqli_query($con, $query);        
+            $result = mysqli_query($con, $query);   
+            $baseCellID = mysqli_insert_id($con);         
+
             $err = mysqli_error($con);
             if (strlen($err) > 0) {
                 $retObj->ERROR = $err;
                 return;
             }
-            // Need to return local data
+            for($o = 0; $o < 9; $o++) {
+                $cellObject = (object)[
+                    'ID' => $baseCellID + $o,
+                    'SquareID' => $squareID,
+                    'GameID' => $gameID,
+                    'LocalOrder' => $o,
+                    'Owner' => null
+                ];
+                array_push($retObj->DATA->Squares[$i]->Cells, $cellObject);
+            }
         }
     }
 
@@ -75,10 +132,8 @@
 
     function authenticateUser($con, $username, $password, &$retObj) { 
         $password = filter_var($password, FILTER_SANITIZE_STRING);
-        $hash = password_hash($password, PASSWORD_DEFAULT);
         $username = filter_var($username, FILTER_SANITIZE_STRING);
-
-        $query = "SELECT ID FROM Account WHERE Username = '$username' AND Password = '$hash'";
+        $query = "SELECT ID, PASSWORD FROM Account WHERE Username = '$username'";
         $result = mysqli_query($con, $query);
 
         // Check to make sure username does not exist already
@@ -88,8 +143,10 @@
             return;
         }
         if($row = mysqli_fetch_row($result)){
-            $retObj->DATA = $row[0];
-            return;
+            if(password_verify($password, $row[1])) {
+                $retObj->DATA = $row[0];
+                return;
+            }
         }
         $retObj->ERROR = "Username/Password could not be authenticated";
     }

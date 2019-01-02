@@ -19,6 +19,12 @@ var events = {
             case 'loginConfirm':
                 this.loginUser();
                 break;
+            case 'randomChallengeConfirm':
+                break;
+            case 'challengeConfirm':
+                this.challenge();
+                break;
+
             default: 
                 console.log("ERROR: button does not have a handler.");
                 break;
@@ -66,27 +72,50 @@ var events = {
         var username = document.getElementById("createUsername").value;
         var password = document.getElementById("createPassword").value;
         t3.callServer("CREATE_USER", function(data) {
-            if(data.ERROR.length > 0) {
-                //handle error
+            data = JSON.parse(data);
+            if(data.ERROR != null) {
+                if(data.ERROR == "username") {
+                    document.getElementById("usernameUsedErrorText").style.display = "block";
+                }
             } else {
+                document.getElementById("usernameUsedErrorText").stye.display = "none";
                 var id = data.DATA;
-                var user = new components.Account(id, username);
+                var user = new component.Account(id, username);
                 t3.User = user;
+                t3.hideGroups();
+                document.getElementById("challengeMenu").style.display = "block";
             }
         }, ["USERNAME", username, "PASSWORD", password]);
     },
 
     loginUser: function() {
-        var username = document.getElementById("createUsername").value;
-        var password = document.getElementById("createPassword").value;
+        var username = document.getElementById("loginUsername").value;
+        var password = document.getElementById("loginPassword").value;
         t3.callServer("AUTHENTICATE_USER", function(data) {
-            if(data.ERROR.length > 0) {
-                //handle error
+            data = JSON.parse(data);
+            if(data.ERROR != null) {
+                if(data.ERROR == "Username/Password could not be authenticated") {
+                    document.getElementById("authenticationCredsErrorText").style.display = "block";
+                }
             } else {
+                document.getElementById("authenticationCredsErrorText").style.display = "none";
                 var id = data.DATA;
-                var user = new components.Account(id, username);
+                var user = new component.Account(id, username);
                 t3.User = user;
+
+                // Display processing menu While loading games
+                // Display Challenge menu
+                t3.hideGroups();
+                document.getElementById("challengeMenu").style.display = "block";
             }
         }, ["USERNAME", username, "PASSWORD", password]);
+    },
+
+    challenge: function() {
+        var user = document.getElementById("challengeUsername").value;
+        t3.callServer("CREATE_GAME", function(data) {
+            data = JSON.parse(data);
+            console.log(data);
+        }, ["CREATOR_ID", t3.User.id, "CHALLENGED_NAME", user]);
     }
 };

@@ -28,8 +28,18 @@
             authenticateUser($con, $name, $pass, $retObj);
             echo json_encode($retObj);
             break;
+        case 'CREATE_GAME': 
+            $creatorID = $_GET['CREATOR_ID'];
+            $challengedName = $_GET['CHALLENGED_NAME'];
+            // Confirm challengee exists
+            findUser($con, $challengedName, $retObj);
+            if($retObj->ERROR == null) {
+                createGame($con, $creatorID, $retObj->DATA, $retObj);
+            }
+            echo json_encode($retObj);
+            break;
         default: 
-            echo 'Could not find command';
+            $retObj->ERROR = "COMMAND UNKNOWN";
     }
     exit();
 ?>

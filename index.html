@@ -19,18 +19,26 @@
         </div>
         <div id = "createMenu" class = "elementGroup">
             <h3>Create Account</h3>
+            <label for = "createUsername" id = "usernameUsedErrorText" style = "display: none;">This username is already taken. Please try another one!</label>
             <input id = "createUsername" placeholder="Username"/>
             <input id = "createPassword" type = "password" placeholder="Password"/>
             <div class = "tagline" onclick = "events.onButtonSelect(login)">Already have an account? Click here!</div>
             <div class = "button confirm" onclick = "events.onButtonSelect(this)" id = "createConfirm">Create</div>
         </div>
         <div id = "loginMenu" class = "elementGroup">
-                <h3>Login</h3>
-                <input id = "loginUsername" placeholder="Username"/>
-                <input id = "loginPassword" type = "password" placeholder="Password"/>
-                <div class = "tagline" onclick = "events.onButtonSelect(create)">Don't have an account? Click here!</div>
-                <div class = "button confirm" onclick = "events.onButtonSelect(this)" id = "loginConfirm">Login</div>
-            </div>
+            <h3>Login</h3>
+            <label for = "loginUsername" id = "authenticationCredsErrorText" style = "display: none;">The provided credentials do not match our records.</label>
+            <input id = "loginUsername" placeholder="Username"/>
+            <input id = "loginPassword" type = "password" placeholder="Password"/>
+            <div class = "tagline" onclick = "events.onButtonSelect(create)">Don't have an account? Click here!</div>
+            <div class = "button confirm" onclick = "events.onButtonSelect(this)" id = "loginConfirm">Login</div>
+        </div>
+        <div id = "challengeMenu" class = "elementGroup">
+            <h3>Challenge a User</h3>
+            <input id = "challengeUsername" placeholder="Username"/>
+            <div class = "button confirm" onclick = "events.onButtonSelect(this)" id = "challengeConfirm">Challenge User</div>
+            <div class = "button" onclick = "events.onButtonSelect(this)" id = "randomChallengeConfirm">Random Challenger</div>
+        </div>
         <script>t3.initializeEntry();</script>
     </body>
 </html>

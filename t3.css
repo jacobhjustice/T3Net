@@ -36,6 +36,11 @@ body {
     margin-top: 15px;
 }
 
+#createMenu #usernameUsedErrorText, #createMenu #authenticationCredsErrorText {
+    display: none;
+    color: #aa4040;
+}
+
 .subscript {
     display: inline;
     font-size: 15px;
