@@ -20,12 +20,24 @@
 
 // ALL FUNC
 
-    function createGame($con, $creatorID, $challengedID, &$retObj) {
+
+// TODO: loadGame, createGameRandom, 
+    function createGame($con, $creatorID, $challengedName, &$retObj) {
         // TODO TEST, RETURN DATA TO CLIENT
         $creatorID = filter_var($creatorID, FILTER_SANITIZE_STRING);
-        $challengedID = filter_var($challengedID, FILTER_SANITIZE_STRING);
+        $challengedName = filter_var($challengedName, FILTER_SANITIZE_STRING);
         
+        // Confirm challengee exists
+        findUser($con, $challengedName, $retObj);
+        if($retObj->ERROR != null) {
+            return;
+        }
+        $challengedID = $retObj->DATA;
 
+        if($challengedID == $creatorID) {
+            $retObj->ERROR = -2;
+            return;
+        }
 
         // Create the game
         $query = "INSERT INTO Game (Player1, Player2, PlayerTurn, TurnNumber, NextSquare) VALUES ($creatorID, $challengedID, $creatorID, 0, -1);";
@@ -35,12 +47,18 @@
             $retObj->ERROR = $err;
             return;
         }
+
         $gameID = mysqli_insert_id($con);
+        $player2Object = (object)[
+            'ID' => $challengedID,
+            'Logo' => 'O',
+            'Username' => $challengedName
+        ];
+
         $retObj->DATA = (object) [
             'ID' => $gameID,
-            'Player1' => $creatorID,
-            'Player2' => $challengedID,
-            'PlayerTurn' => $creatorID,
+            'Player1' => null,
+            'Player2' => $player2Object,
             'TurnNumber' => 0,
             'NextSquare' => -1,
             'Squares' => array(),
@@ -151,18 +169,50 @@
         $retObj->ERROR = "Username/Password could not be authenticated";
     }
 
-    function takeTurn($conn, $turn, $cellID, $squareID, $nextSquareID, $playerID, $tookSquare, $wonGame) {
+    function takeTurn($con, $nextTurnNumber, $cellID, $squareID, $gameID, $cellOrder, $playerID, $opponentID, $tookSquare, $wonGame, &$retObj) {
+        $nextTurnNumber = filter_var($nextTurnNumber, FILTER_SANITIZE_INT);
+        $cellID = filter_var($cellID, FILTER_SANITIZE_INT);
+        $squareID = filter_var($squareID, FILTER_SANITIZE_INT);
+        $gameID = filter_var($gameID, FILTER_SANITIZE_INT);
+        $cellOrder = filter_var($cellOrder, FILTER_SANITIZE_INT);
+        $playerID = filter_var($playerID, FILTER_SANITIZE_INT);
+        $opponentID = filter_var($opponentID, FILTER_SANITIZE_INT);
+        $tookSquare = filter_var($tookSquare, FILTER_SANITIZE_BOOL);
+        $wonGame = filter_var($wonGame, FILTER_SANITIZE_BOOL);
+        $query = "UPDATE Cell WHERE ID = $cellID SET Owner = $playerID";
+        $err = mysqli_error($con);
+        $result = mysqli_query($con, $query);
+        if(strlen($err) > 0) {
+            $retObj->ERROR = $err;
+            return;
+        }
 
+        if($tookSquare) {
+            $query = "UPDATE Square WHERE ID = $squareID SET Owner = $playerID";
+            $result = mysqli_query($con, $query);
+            if(strlen($err) > 0) {
+                $retObj->ERROR = $err;
+                return;
+            }
+        }
+
+        $query = "UPDATE Game WHERE ID = $gameID SET TurnNumber = $nextTurnNumber, PlayerTurn = $opponentID" . ($wonGame ? ", Winner = $playerID" : "");
+        $result = mysqli_query($con, $query);
+        if(strlen($err) > 0) {
+            $retObj->ERROR = $err;
+            return;
+        }
+        $retObj->DATA = "success";
     }
 
-    function allGames($conn, $userID, $previousGames) {
+    function fetchGames($conn, $userID, $previousGames) {
         // TODO: TEST FINISH
         $userID = filter_var($userID, FILTER_SANITIZE_INT);
         $query = "SELECT G.ID, G.Player1, G.Player2, A.Username AS Opposer, G.Winner, G.PlayerTurn FROM Game G LEFT JOIN Account A ON (A.ID <> $userID AND A.ID = Player2) OR (A.ID <> $userID AND A.ID = Player1) WHERE (G.Player1 = $userID OR G.Player2 = $userID) " . ($previousGames ? "" : " AND G.Winner IS NULL");
 
     }
 
-    function checkForTurn($conn, $gameID, $userID, &$retObj) {
+    function  ($conn, $gameID, $userID, &$retObj) {
         // TODO TEST FINISH
         $gameID = filter_var($gameID, FILTER_SANITIZE_INT);
         $userID = filter_var($userID, FILTER_SANITIZE_INT);

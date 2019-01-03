@@ -1,7 +1,6 @@
 var t3 = {
     Game: undefined,
     User: undefined,
-
     callServer: function(func, callback, paramArray) {
 
         http = new XMLHttpRequest();
@@ -34,6 +33,7 @@ var t3 = {
 
     initializeEntry: function() {
         this.hideGroups();
+        component.BindGameFunctions();
         document.getElementById("entryOptions").style.display = "block";
     },
 
@@ -46,32 +46,51 @@ var t3 = {
         this.User = user;
     },
 
-    // Create data for a new game, send to server, set class variables call render
-    initializeGame: function() {
-        //Gather data for backend, create, send back results, call load part 2
-
-
-        // Create on backend, return results
-        var game_id = 0;
-        var dummyUser = new component.Account(2, "Player 2", "O");
-        this.Game = new component.Game(game_id, t3.User, dummyUser, 0, [], -1);
+    initializeLocalGame: function() {
+        var dummyUser = new component.Account(1, "Player 1", "X");
+        var dummyUser2 = new component.Account(2, "Player 2", "O");
+        this.Game = new component.Game(0, dummyUser, dummyUser2, 0, [], -1);
+        this.Game.isOnline = false;
         for(var i = 0; i < 9; i++) {
             var square_id = i;
-            var square = new component.Square(square_id, game_id, i);
+            var square = new component.Square(square_id, 0, i);
             this.Game.squares.push(square);
             for(var o = 0; o < 9; o++) {
                 var cell_id = o;
-                var cell = new component.Cell(cell_id, square_id, o);
+                var cell = new component.Cell(cell_id, square_id, 0, o);
                 this.Game.squares[i].cells.push(cell);
             }
         }
-        component.BindGameFunctions();
+        this.hideGroups();
+        document.getElementById("content").style.display = "block";
         this.buildBoard();
     },
 
     // Retrieve data from server, call render
-    loadGame: function() {
-
+    loadGame: function(data) {
+        // Load game/player information from server data. If Player1 is Null, then assume the current user is player1
+        var Player1;
+        if(data.Player1 != null) {
+            Player1 = new component.Account(data.Player1.ID, data.Player1.Username, data.Player1.Logo); 
+        } else {
+            this.User.logo = "X";
+            Player1 = this.User;
+        }
+        var Player2 = new component.Account(data.Player2.ID, data.Player2.Username, data.Player2.Logo);
+        this.Game = new component.Game(data.ID, Player1, Player2, data.TurnNumber, [], data.NextSquare, data.Winner);
+        for(var i = 0; i < data.Squares.length; i++) {
+            var dataSquare = data.Squares[i];
+            var square = new component.Square(dataSquare.ID, dataSquare.GameID, dataSquare.LocalOrder, dataSquare.Owner, []);
+            this.Game.squares.push(square);
+            for(var o = 0; o < dataSquare.Cells.length; o++) {
+                var dataCell = dataSquare.Cells[o];
+                var cell = new component.Cell(dataCell.ID, dataCell.SquareID, dataCell.GameID, dataCell.LocalOrder, dataCell.Owner);
+                square.cells.push(cell);
+            }
+        }
+        this.hideGroups();
+        document.getElementById("content").style.display = "block";
+        this.buildBoard();
     },
 
     // selectabeOrder indicates the square index for which selectable class should show up, -1 if any square is selectable
@@ -79,6 +98,7 @@ var t3 = {
         var isOver = this.Game.winner != undefined;
         var html = "";
         if(!isOver) {
+            // Local text
             html += "<h3 id = 'header'>" + this.Game.getCurrentPlayer().username + "'s Turn! Select any of the highlighted squares!</h3>";
         } else {
             html += "<h3 id = 'header'>That's game! The winner is " + this.Game.winner.username + "!</div>"

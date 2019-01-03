@@ -7,11 +7,19 @@ var component = {
         this.squares = Squares != undefined ? Squares : [];
         this.nextSquare = NextSquare;
         this.winner = Winner;
+        this.isOnline = true;
     },
     
     BindGameFunctions: function() {
         component.Game.prototype.getCurrentPlayer = function() {
             return this.turn % 2 == 0 ? this.player1 : this.player2;
+        };
+
+        component.Game.prototype.getNonuserPlayer = function() {
+            if(this.player1 == t3.User.id) {
+                return this.player2;
+            }
+            return this.player1;
         }
     },
 

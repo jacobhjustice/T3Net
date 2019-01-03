@@ -76,7 +76,8 @@ body {
 }
 
 #content { 
-    display: none;
+    color: black;
+    margin-top: 25px;
 }
 
 #t3Table {
@@ -104,8 +105,8 @@ body {
     vertical-align: top;
 }
 
-.square.current:not(.taken) {
-    background-color: lightyellow;
+.square.current:not(.taken) .cell {
+    background-color: lightyellow !important;
 }
 
 .innerTable {
@@ -130,6 +131,7 @@ body {
     width: 33.33%;
     display: table-cell;
     border: 1px solid gray;
+    background-color: white;
     margin: 0px;
     box-sizing: border-box;
     text-align: center;
@@ -137,6 +139,6 @@ body {
 }
 
 .square.selectable .cell:hover:not(.taken) {
-    background-color: yellow;
+    background-color: yellow !important;
     cursor: pointer;
 }

@@ -14,32 +14,42 @@
         'ERROR' => null,
         'DATA' => null,
     ];
-    
     switch($func) {
         case 'CREATE_USER':
             $name = $_GET['USERNAME'];
             $pass = $_GET['PASSWORD'];
             createUser($con, $name, $pass, $retObj);
-            echo json_encode($retObj);
             break;
         case 'AUTHENTICATE_USER':
             $name = $_GET['USERNAME'];
             $pass = $_GET['PASSWORD'];
             authenticateUser($con, $name, $pass, $retObj);
-            echo json_encode($retObj);
             break;
         case 'CREATE_GAME': 
             $creatorID = $_GET['CREATOR_ID'];
             $challengedName = $_GET['CHALLENGED_NAME'];
-            // Confirm challengee exists
-            findUser($con, $challengedName, $retObj);
             if($retObj->ERROR == null) {
-                createGame($con, $creatorID, $retObj->DATA, $retObj);
+                createGame($con, $creatorID, $challengedName, $retObj);
             }
-            echo json_encode($retObj);
+            break;
+        case 'FETCH_GAMES':
+            break;
+        case 'TAKE_TURN':
+            $nextTurnNumber = $_GET['NEXT_TURN'];
+            $cellID = $_GET['CELL_ID'];
+            $squareID = $_GET['SQUARE_ID'];
+            $gameID = $_GET['GAME_ID'];
+            $cellOrder = $_GET['ORDER'];
+            $playerID = $_GET['PLAYER_ID'];
+            $opponentID = $_GET['OPPONENT_ID'];
+            $tookSquare = (bool)$_GET['TOOK_SQUARE'];
+            $wonGame = (bool)$_GET['WON_GAME'];
+            takeTurn($con, $nextTurnNumber, $cellID, $squareID, $gameID, $cellOrder, $playerID, $opponentID, $tookSquare, $wonGame, $retObj);
             break;
         default: 
             $retObj->ERROR = "COMMAND UNKNOWN";
     }
+    mysqli_close($con);
+    echo json_encode($retObj);
     exit();
 ?>

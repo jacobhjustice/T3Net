@@ -11,7 +11,7 @@ var events = {
                 break;
             case 'local':
                 t3.initializeUser();
-                t3.initializeGame();
+                t3.initializeLocalGame();
                 break;  
             case 'createConfirm':
                 this.createUser();
@@ -39,12 +39,14 @@ var events = {
 
         // Update DB With player choice, game's turn ++,
         var square = game.squares[squareIndex];
-        square.cells[cellIndex].owner = player;
+        var cell = square.cells[cellIndex];
+        cell.owner = player;
         game.turn++;
         game.nextSquare = game.squares[cellIndex].owner == undefined ? cellIndex : -1;
-        //check for victory, rewrite?
+
         // Check if this move won the square for the player
         var wonSquare = false;
+        var wonGame = false;
         var colCheck = cellIndex % 3;
         var rowCheck = Math.floor(cellIndex / 3) * 3;
         if((square.cells[colCheck].owner == player && square.cells[colCheck + 3].owner == player && square.cells[colCheck + 6].owner == player) ||
@@ -62,9 +64,15 @@ var events = {
             (game.squares[rowCheck].owner == player && game.squares[rowCheck + 1].owner == player && game.squares[rowCheck + 2].owner == player) ||
             (game.squares[0].owner == player && game.squares[4].owner == player && game.squares[8].owner == player) ||
             (game.squares[2].owner == player && game.squares[4].owner == player && game.squares[6].owner == player)) {
+                wonGame = true;
             game.winner = player;
         }
+        t3.callServer("TAKE_TURN", function(data) {
+            console.log(data);
+            // start polling
 
+  
+        }, ["NEXT_TURN", game.turn, "CELL_ID", cell.id, "SQUARE_ID", square.id, "GAME_ID", game.id, "ORDER", cell.order, "PLAYER_ID", t3.User.id, "OPPONENT_ID", game.getNonuserPlayer().id, "TOOK_SQUARE", wonSquare, "WON_GAME", wonGame]);
         t3.buildBoard();
     },
 
@@ -78,7 +86,7 @@ var events = {
                     document.getElementById("usernameUsedErrorText").style.display = "block";
                 }
             } else {
-                document.getElementById("usernameUsedErrorText").stye.display = "none";
+                document.getElementById("usernameUsedErrorText").style.display = "none";
                 var id = data.DATA;
                 var user = new component.Account(id, username);
                 t3.User = user;
@@ -115,7 +123,7 @@ var events = {
         var user = document.getElementById("challengeUsername").value;
         t3.callServer("CREATE_GAME", function(data) {
             data = JSON.parse(data);
-            console.log(data);
+            t3.loadGame(data.DATA);
         }, ["CREATOR_ID", t3.User.id, "CHALLENGED_NAME", user]);
     }
 };
