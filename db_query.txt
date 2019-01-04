@@ -13,6 +13,7 @@ CREATE TABLE Game(
     PlayerTurn INT,
     NextSquare INT,
     Winner INT,
+    LastUpdate DATETIME,
     PRIMARY KEY(ID),
     FOREIGN KEY(Player1) REFERENCES Account(ID),
     FOREIGN KEY(Player2) REFERENCES Account(ID),

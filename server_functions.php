@@ -40,7 +40,7 @@
         }
 
         // Create the game
-        $query = "INSERT INTO Game (Player1, Player2, PlayerTurn, TurnNumber, NextSquare) VALUES ($creatorID, $challengedID, $creatorID, 0, -1);";
+        $query = "INSERT INTO Game (Player1, Player2, PlayerTurn, TurnNumber, NextSquare, LastUpdate) VALUES ($creatorID, $challengedID, $creatorID, 0, -1, now());";
         $result = mysqli_query($con, $query);        
         $err = mysqli_error($con);
         if (strlen($err) > 0) {
@@ -177,8 +177,7 @@
         $nextSquare = filter_var($nextSquare, FILTER_SANITIZE_STRING);
         $playerID = filter_var($playerID, FILTER_SANITIZE_STRING);
         $opponentID = filter_var($opponentID, FILTER_SANITIZE_STRING);
-
-        $query = "UPDATE Cell SET Owner = $playerID, TurnNumber = $nextTurnNumber, WHERE ID = $cellID ";
+        $query = "UPDATE Cell SET Owner = $playerID, TurnNumber = $nextTurnNumber WHERE ID = $cellID ";
         $result = mysqli_query($con, $query);
         $err = mysqli_error($con);
         if(strlen($err) > 0) {
@@ -195,7 +194,7 @@
                 return;
             }
         }
-        $query = "UPDATE Game SET TurnNumber = $nextTurnNumber, PlayerTurn = $opponentID, NextSquare = $nextSquare" . ($wonGame ? ", Winner = $playerID" : "") . " WHERE ID = $gameID";
+        $query = "UPDATE Game SET TurnNumber = $nextTurnNumber, PlayerTurn = $opponentID, NextSquare = $nextSquare, LastUpdate = now()" . ($wonGame ? ", Winner = $playerID" : "") . " WHERE ID = $gameID";
         $result = mysqli_query($con, $query);
         $err = mysqli_error($con);
         if(strlen($err) > 0) {
@@ -208,7 +207,7 @@
     function fetchGames($con, $userID, &$retObj) {
         // TODO: TEST FINISH
         $userID = filter_var($userID, FILTER_SANITIZE_STRING);
-        $query = "SELECT G.ID, G.Player1, G.Player2, A.Username AS Opposer, G.Winner, G.PlayerTurn FROM Game G LEFT JOIN Account A ON (A.ID <> $userID AND A.ID = Player2) OR (A.ID <> $userID AND A.ID = Player1) WHERE (G.Player1 = $userID OR G.Player2 = $userID) ORDER BY WINNER";
+        $query = "SELECT G.ID, G.Player1, G.Player2, A.Username AS Opposer, G.Winner, G.PlayerTurn FROM Game G LEFT JOIN Account A ON (A.ID <> $userID AND A.ID = Player2) OR (A.ID <> $userID AND A.ID = Player1) WHERE (G.Player1 = $userID OR G.Player2 = $userID) ORDER BY LastUpdate DESC";
         $result = mysqli_query($con, $query);
         $err = mysqli_error($con);
         if(strlen($err) > 0) {
