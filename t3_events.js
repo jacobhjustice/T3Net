@@ -129,6 +129,7 @@ var events = {
                 // Display Challenge menu
                 t3.hideGroups();
                 document.getElementById("challengeMenu").style.display = "block";
+                t3.fetchGames();
             }
         }, ["USERNAME", username, "PASSWORD", password]);
     },
@@ -139,5 +140,13 @@ var events = {
             data = JSON.parse(data);
             t3.loadGame(data.DATA);
         }, ["CREATOR_ID", t3.User.id, "CHALLENGED_NAME", user]);
+    },
+
+    onGameSelect: function(e) {
+        var id = e.dataset.game;
+        console.log(id);
+        t3.callServer("LOAD_GAME", function(data) {
+            console.log(data);
+        }, ["GAME_ID", id, "USER_ID", t3.User.id]);
     }
 };

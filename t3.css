@@ -75,6 +75,32 @@ body {
     margin-top: 10px;
 }
 
+.gameOption {
+    width: 400px;
+    background-color: white;
+    margin-bottom: 10px;
+    border: 4px solid gray;
+    color: black;
+    border-radius: 50px;
+}
+
+.gameOption.awaitingTurn {
+    background-color: gray;
+}
+
+.gameOption.finished {
+    color: white;
+    border-color: white;
+}
+
+.gameOption.finished.winner {
+    background-color: #51ac27;
+}
+
+.gameOption.finished.loser {
+    background-color: #aa4040;
+}
+
 #content { 
     color: black;
     margin-top: 25px;

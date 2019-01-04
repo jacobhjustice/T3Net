@@ -178,7 +178,7 @@
         $playerID = filter_var($playerID, FILTER_SANITIZE_STRING);
         $opponentID = filter_var($opponentID, FILTER_SANITIZE_STRING);
 
-        $query = "UPDATE Cell SET Owner = $playerID WHERE ID = $cellID ";
+        $query = "UPDATE Cell SET Owner = $playerID, TurnNumber = $nextTurnNumber, WHERE ID = $cellID ";
         $result = mysqli_query($con, $query);
         $err = mysqli_error($con);
         if(strlen($err) > 0) {
@@ -205,11 +205,30 @@
         $retObj->DATA = "success";
     }
 
-    function fetchGames($conn, $userID, $previousGames) {
+    function fetchGames($con, $userID, &$retObj) {
         // TODO: TEST FINISH
-        $userID = filter_var($userID, FILTER_SANITIZE_INT);
-        $query = "SELECT G.ID, G.Player1, G.Player2, A.Username AS Opposer, G.Winner, G.PlayerTurn FROM Game G LEFT JOIN Account A ON (A.ID <> $userID AND A.ID = Player2) OR (A.ID <> $userID AND A.ID = Player1) WHERE (G.Player1 = $userID OR G.Player2 = $userID) " . ($previousGames ? "" : " AND G.Winner IS NULL");
-
+        $userID = filter_var($userID, FILTER_SANITIZE_STRING);
+        $query = "SELECT G.ID, G.Player1, G.Player2, A.Username AS Opposer, G.Winner, G.PlayerTurn FROM Game G LEFT JOIN Account A ON (A.ID <> $userID AND A.ID = Player2) OR (A.ID <> $userID AND A.ID = Player1) WHERE (G.Player1 = $userID OR G.Player2 = $userID) ORDER BY WINNER";
+        $result = mysqli_query($con, $query);
+        $err = mysqli_error($con);
+        if(strlen($err) > 0) {
+            $retObj->ERROR = $err;
+            return;
+        }
+        $retArray = [];
+        while($row = mysqli_fetch_assoc($result)){
+            $obj = (object)[
+                'ID' => $row['ID'],
+                'Player1' => $row['Player1'],
+                'Player2' => $row['Player2'],
+                'Opposer' => $row['Opposer'],
+                'Winner' => $row['Winner'],
+                'PlayerTurn' => $row['PlayerTurn']
+            ];
+            array_push($retArray, $obj);
+        }
+        $retObj->DATA = $retArray;
+        return;
     }
 
     function getTurns($conn, $gameID, $userID, &$retObj) {

@@ -34,6 +34,7 @@ CREATE TABLE Cell(
     GameID INT NOT NULL,
     LocalOrder INT NOT NULL,
     Owner INT,
+    TurnNumber INT,
     PRIMARY KEY(ID),
     FOREIGN KEY (SquareID) REFERENCES Square(ID),
     FOREIGN KEY (GameID) REFERENCES Game(ID)

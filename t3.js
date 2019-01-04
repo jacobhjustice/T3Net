@@ -1,6 +1,8 @@
 var t3 = {
     Game: undefined,
     User: undefined,
+    CurrentGames: undefined,
+
     callServer: function(func, callback, paramArray) {
 
         http = new XMLHttpRequest();
@@ -22,6 +24,44 @@ var t3 = {
     
         http.open("GET", url, true); 
         http.send();
+    },
+
+    fetchGames: function() {
+        t3.callServer("FETCH_GAMES", function(data) {
+            // TODO Empty view for no games or error
+            data = JSON.parse(data);
+            if(data.ERROR != null) {
+                console.log(data.ERROR);
+            } else {
+                data = data.DATA;
+                var html = "";
+                for(var i = 0; i < data.length; i++) {
+                    var isOver = data[i].Winner != null;
+                    var isTurn = parseInt(data[i].PlayerTurn) == t3.User.id;
+                    var isWinner = parseInt(data[i].Winner) == t3.User.id;
+                    var opposer = data[i].Opposer;
+                    var id = data[i].ID;
+                    html += "<div onclick = 'events.onGameSelect(this)' data-game = '" + id + "' class = 'button gameOption "
+                    if(isOver) {
+                        html += "finished " 
+                        if(isWinner) {
+                            html += "winner' > Won Against " + opposer;
+                        } else {
+                            html += "loser' > Lost Against " + opposer;
+                        }
+                    } else {
+                        html += "notFinished "
+                        if(isTurn) {
+                            html += "yourTurn' >Your Turn Against" + opposer;
+                        } else {
+                            html += "awaitingTurn' >Waiting for" + opposer;
+                        }
+                    }
+                    html += "</div>"
+                }
+            }
+            document.getElementById("gameList").innerHTML = html;
+        }, ["USER_ID", t3.User.id]);
     },
 
     hideGroups: function() {

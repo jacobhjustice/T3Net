@@ -33,6 +33,8 @@
             }
             break;
         case 'FETCH_GAMES':
+            $userID = $_GET['USER_ID'];
+            fetchGames($con, $userID, $retObj);
             break;
         case 'TAKE_TURN':
             $nextTurnNumber = $_GET['NEXT_TURN'];
