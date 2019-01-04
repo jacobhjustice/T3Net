@@ -22,7 +22,7 @@ var component = {
             return this.player1;
         };
 
-        component.Game.getPlayerByID = function(id) {
+        component.Game.prototype.getPlayerByID = function(id) {
             if(this.player1.id == id) {
                 return this.player1;
             }

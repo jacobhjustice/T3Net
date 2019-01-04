@@ -133,7 +133,7 @@
     
             $player2Object = (object)[
                 'ID' => $row['P2ID'],
-                'Logo' => 'O',
+                'Logo' => 'X',
                 'Username' => $row['P2Username']
             ];
     
@@ -237,7 +237,9 @@
         }
         if($row = mysqli_fetch_row($result)){
             if(password_verify($password, $row[1])) {
-                $retObj->DATA = $row[0];
+                $id = $row[0];
+                $retObj->DATA = $id;
+                // setcookie("T3_USER", $id, time() + 86400);
                 return;
             }
         }

@@ -52,15 +52,16 @@ var t3 = {
                     } else {
                         html += "notFinished "
                         if(isTurn) {
-                            html += "yourTurn' >Your Turn Against" + opposer;
+                            html += "yourTurn' >Your Turn Against " + opposer;
                         } else {
-                            html += "awaitingTurn' >Waiting for" + opposer;
+                            html += "awaitingTurn' >Waiting for " + opposer;
                         }
                     }
                     html += "</div>"
                 }
             }
             document.getElementById("gameList").innerHTML = html;
+            document.getElementById("logoutButton").style.display = "block";
         }, ["USER_ID", t3.User.id]);
     },
 
@@ -130,18 +131,27 @@ var t3 = {
         }
         this.hideGroups();
         document.getElementById("content").style.display = "block";
+        document.getElementById("backButton").style.display = "block";
         this.buildBoard();
     },
 
     // selectabeOrder indicates the square index for which selectable class should show up, -1 if any square is selectable
     buildBoard: function() {
         var isOver = this.Game.winner != undefined;
+        var isTurn = this.Game.getCurrentPlayer().id == this.User.id;
         var html = "";
         if(!isOver) {
-            // Local text
-            html += "<h3 id = 'header'>" + this.Game.getCurrentPlayer().username + "'s Turn! Select any of the highlighted squares!</h3>";
+            if(this.Game.isOnline) {
+                if(isTurn) {
+                    html += "<h3 id = 'header'>It's your turn! Select any of the highlighted squares to move!</h3>";
+                } else {
+                    html += "<h3 id = 'header'>Waiting on " + this.Game.getCurrentPlayer().username + " to move.</h3>";
+                }
+            } else {
+                html += "<h3 id = 'header'>" + this.Game.getCurrentPlayer().username + "'s Turn! Select any of the highlighted squares to move!</h3>";
+            }
         } else {
-            html += "<h3 id = 'header'>That's game! The winner is " + this.Game.winner.username + "!</div>"
+            html += "<h3 id = 'header'>That's game! The winner is " + this.Game.getPlayerByID(this.Game.winner).username + "!</div>"
         }
         html += "<div id = 't3Table'>";
         
@@ -149,7 +159,7 @@ var t3 = {
             html += i % 3 == 0 ? "<div class = 'row'>" : "";
 
             var squareClassList = "square ";
-            var isSelectable = (this.Game.nextSquare == -1 || i == this.Game.nextSquare) && !isOver;
+            var isSelectable = (this.Game.nextSquare == -1 || i == this.Game.nextSquare) && !isOver && isTurn;
             var square = this.Game.squares[i];
 
             // consider just having 2 cases for html += based on square.owner

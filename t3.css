@@ -1,3 +1,24 @@
+#backButton {
+    width: 150px;
+    height: 35px;
+    font-size: 20px;
+    line-height: 35px;
+    position: absolute;
+    top: 0;
+    box-sizing: initial;
+}
+
+#logoutButton {
+    background-color: #aa4040;
+    width: 100px;
+    height: 35px;
+    font-size: 20px;
+    line-height: 35px;
+    position: absolute;
+    top: 0;
+    box-sizing: initial;
+}
+
 body {
     background-color: #404080;
 }
@@ -116,6 +137,8 @@ body {
 #header {
     margin: 0 auto;
     text-align: center;
+    height: 50px;
+    color: white;
 }
 
 #turnText {

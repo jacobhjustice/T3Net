@@ -50,26 +50,26 @@ var events = {
         // Check if this move won the square for the player
         var wonSquare = false;
         var wonGame = false;
-
+        var pid = player.id;
         var colCheck = cellIndex % 3;
         var rowCheck = Math.floor(cellIndex / 3) * 3;
-        if((square.cells[colCheck].owner == player && square.cells[colCheck + 3].owner == player && square.cells[colCheck + 6].owner == player) ||
-            (square.cells[rowCheck].owner == player && square.cells[rowCheck + 1].owner == player && square.cells[rowCheck + 2].owner == player) ||
-            (square.cells[0].owner == player && square.cells[4].owner == player && square.cells[8].owner == player) ||
-            (square.cells[2].owner == player && square.cells[4].owner == player && square.cells[6].owner == player)) {
+        if((square.cells[colCheck].owner == pid && square.cells[colCheck + 3].owner == pid && square.cells[colCheck + 6].owner == pid) ||
+            (square.cells[rowCheck].owner == pid && square.cells[rowCheck + 1].owner == pid && square.cells[rowCheck + 2].owner == pid) ||
+            (square.cells[0].owner == pid && square.cells[4].owner == pid && square.cells[8].owner == pid) ||
+            (square.cells[2].owner == pid && square.cells[4].owner == pid && square.cells[6].owner == pid)) {
                 wonSquare = true;
-                square.owner = player.id;
+                square.owner = pid;
         }
         //square level
         colCheck = squareIndex % 3;
         rowCheck = Math.floor(squareIndex / 3) * 3;
         if(wonSquare && 
-            (game.squares[colCheck].owner == player && game.squares[colCheck + 3].owner == player && game.squares[colCheck + 6].owner == player) ||
-            (game.squares[rowCheck].owner == player && game.squares[rowCheck + 1].owner == player && game.squares[rowCheck + 2].owner == player) ||
-            (game.squares[0].owner == player && game.squares[4].owner == player && game.squares[8].owner == player) ||
-            (game.squares[2].owner == player && game.squares[4].owner == player && game.squares[6].owner == player)) {
+            (game.squares[colCheck].owner == pid && game.squares[colCheck + 3].owner == pid && game.squares[colCheck + 6].owner == pid) ||
+            (game.squares[rowCheck].owner == pid && game.squares[rowCheck + 1].owner == pid && game.squares[rowCheck + 2].owner == pid) ||
+            (game.squares[0].owner == pid && game.squares[4].owner == pid && game.squares[8].owner == pid) ||
+            (game.squares[2].owner == pid && game.squares[4].owner == pid && game.squares[6].owner == pid)) {
                 wonGame = true;
-            game.winner = player;
+            game.winner = pid;
         }
         var params = [
             "NEXT_TURN", game.turn, 
@@ -138,7 +138,11 @@ var events = {
         var user = document.getElementById("challengeUsername").value;
         t3.callServer("CREATE_GAME", function(data) {
             data = JSON.parse(data);
-            t3.loadGame(data.DATA);
+            if(data.ERROR != null) {
+
+            } else {
+                t3.loadGame(data.DATA);
+            }
         }, ["CREATOR_ID", t3.User.id, "CHALLENGED_NAME", user]);
     },
 
@@ -146,7 +150,26 @@ var events = {
         var id = e.dataset.game;
         console.log(id);
         t3.callServer("LOAD_GAME", function(data) {
-            console.log(data);
+            data = JSON.parse(data);
+            if(data.ERROR) {
+                console.log(error);
+            } else {
+                t3.loadGame(data.DATA);
+            }
         }, ["GAME_ID", id]);
+    },
+
+    onClickBack: function() {
+        t3.Game = undefined;
+        t3.hideGroups();
+        document.getElementById("challengeMenu").style.display = "block";
+        t3.fetchGames();
+    },
+
+    onClickLogout: function() {
+        t3.User = undefined;
+        t3.hideGroups();
+        document.getElementById("entryOptions").style.display = "block";
+        t3.initializeEntry();
     }
 };
