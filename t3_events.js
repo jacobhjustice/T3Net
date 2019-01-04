@@ -43,7 +43,7 @@ var events = {
         // Update DB With player choice, game's turn ++,
         var square = game.squares[squareIndex];
         var cell = square.cells[cellIndex];
-        cell.owner = player;
+        cell.owner = player.id;
         game.turn++;
         game.nextSquare = game.squares[cellIndex].owner == undefined ? cellIndex : -1;
 
@@ -58,7 +58,7 @@ var events = {
             (square.cells[0].owner == player && square.cells[4].owner == player && square.cells[8].owner == player) ||
             (square.cells[2].owner == player && square.cells[4].owner == player && square.cells[6].owner == player)) {
                 wonSquare = true;
-                square.owner = player;
+                square.owner = player.id;
         }
         //square level
         colCheck = squareIndex % 3;
@@ -147,6 +147,6 @@ var events = {
         console.log(id);
         t3.callServer("LOAD_GAME", function(data) {
             console.log(data);
-        }, ["GAME_ID", id, "USER_ID", t3.User.id]);
+        }, ["GAME_ID", id]);
     }
 };

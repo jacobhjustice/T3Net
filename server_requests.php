@@ -32,6 +32,10 @@
                 createGame($con, $creatorID, $challengedName, $retObj);
             }
             break;
+        case 'LOAD_GAME':
+            $gameID = $_GET['GAME_ID'];
+            loadGame($con, $gameID, $retObj);
+            break;
         case 'FETCH_GAMES':
             $userID = $_GET['USER_ID'];
             fetchGames($con, $userID, $retObj);

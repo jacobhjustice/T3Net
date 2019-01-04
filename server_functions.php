@@ -23,7 +23,6 @@
 
 // TODO: loadGame, createGameRandom, 
     function createGame($con, $creatorID, $challengedName, &$retObj) {
-        // TODO TEST, RETURN DATA TO CLIENT
         $creatorID = filter_var($creatorID, FILTER_SANITIZE_STRING);
         $challengedName = filter_var($challengedName, FILTER_SANITIZE_STRING);
         
@@ -110,6 +109,82 @@
                     'Owner' => null
                 ];
                 array_push($retObj->DATA->Squares[$i]->Cells, $cellObject);
+            }
+        }
+    }
+
+    function loadGame($con, $gameID, &$retObj) {
+        $gameID = filter_var($gameID, FILTER_SANITIZE_STRING);
+
+        // Create the game
+        $query = "SELECT G.ID, A.ID AS P1ID, A.Username AS P1Username, A2.ID AS P2ID, A2.Username AS P2Username, G.TurnNumber, G.NextSquare, G.Winner FROM Game G LEFT JOIN Account A ON A.ID = G.Player1 LEFT JOIN Account A2 ON A2.ID = G.Player2 WHERE $gameID = G.ID";
+        $result = mysqli_query($con, $query);        
+        $err = mysqli_error($con);
+        if (strlen($err) > 0) {
+            $retObj->ERROR = $err;
+            return;
+        }
+        if($row = mysqli_fetch_assoc($result)) {
+            $player1Object = (object)[
+                'ID' => $row['P1ID'],
+                'Logo' => 'O',
+                'Username' => $row['P1Username']
+            ];
+    
+            $player2Object = (object)[
+                'ID' => $row['P2ID'],
+                'Logo' => 'O',
+                'Username' => $row['P2Username']
+            ];
+    
+            $retObj->DATA = (object) [
+                'ID' => $gameID,
+                'Player1' => $player1Object,
+                'Player2' => $player2Object,
+                'TurnNumber' => $row['TurnNumber'],
+                'NextSquare' => $row['NextSquare'],
+                'Squares' => array(),
+                'Winner' => $row['Winner'],
+            ];
+    
+            $query = "SELECT ID, LocalOrder, Owner FROM Square WHERE GameID = $gameID ORDER BY LocalOrder";
+            $result = mysqli_query($con, $query);   
+            $err = mysqli_error($con);
+            if (strlen($err) > 0) {
+                $retObj->ERROR = $err;
+                return;
+            }
+
+            while($row2 = mysqli_fetch_assoc($result)) {
+                // TODO Finish
+                $squareID = $row2['ID'];
+                $squareObject = (object)[
+                    'ID' => $squareID,
+                    'GameID' => $gameID,
+                    'LocalOrder' => $row2['LocalOrder'],
+                    'Owner' => $row2['Owner'],
+                    'Cells' => array()
+                ];
+                $query = "SELECT ID, LocalOrder, Owner FROM Cell WHERE SquareID = $squareID ORDER BY LocalOrder";
+                $result2 = mysqli_query($con, $query);   
+                $err = mysqli_error($con);
+                if (strlen($err) > 0) {
+                    $retObj->ERROR = $err;
+                    return;
+                }
+
+                while($row3 = mysqli_fetch_assoc($result2)) {
+                    $squareID = $row3['ID'];
+                    $cellObject = (object)[
+                        'ID' => $squareID,
+                        'SquareID' => $squareID,
+                        'GameID' => $gameID,
+                        'LocalOrder' => $row3['LocalOrder'],
+                        'Owner' => $row3['Owner'],
+                    ];
+                    array_push($squareObject->Cells, $cellObject);
+                }
+                array_push($retObj->DATA->Squares, $squareObject);
             }
         }
     }
@@ -230,17 +305,17 @@
         return;
     }
 
-    function getTurns($conn, $gameID, $userID, &$retObj) {
-        // TODO TEST FINISH
-        $gameID = filter_var($gameID, FILTER_SANITIZE_INT);
-        $userID = filter_var($userID, FILTER_SANITIZE_INT);
-        $query = "SELECT COUNT(*) FROM Game WHERE ID = $gameID AND $userID = PlayerTurn";
-        $result = mysqli_query($con, $query);
-        $err = mysqli_error($con);
-        if (strlen($err) > 0) {
-            $retObj->ERROR = $err;
-            return;
-        }
-        //$retObj->DATA = $
-    }
+    // function getTurns($conn, $gameID, $userID, &$retObj) {
+    //     // TODO TEST FINISH
+    //     $gameID = filter_var($gameID, FILTER_SANITIZE_INT);
+    //     $userID = filter_var($userID, FILTER_SANITIZE_INT);
+    //     $query = "SELECT COUNT(*) FROM Game WHERE ID = $gameID AND $userID = PlayerTurn";
+    //     $result = mysqli_query($con, $query);
+    //     $err = mysqli_error($con);
+    //     if (strlen($err) > 0) {
+    //         $retObj->ERROR = $err;
+    //         return;
+    //     }
+    //     //$retObj->DATA = $
+    // }
 ?>

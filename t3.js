@@ -164,14 +164,14 @@ var t3 = {
                 squareClassList += "taken "
             }
 
-            html += "<div class = '" + squareClassList +"' data-owner = '" + (square.owner != undefined ? square.owner.id : 0) + "' data-order = '" + i + "'><div class = 'innerTable'>"
+            html += "<div class = '" + squareClassList +"' data-owner = '" + (square.owner != undefined ? square.owner : 0) + "' data-order = '" + i + "'><div class = 'innerTable'>"
             if(square.owner != undefined) {
-                html += square.owner.logo;
+                html += t3.Game.getPlayerByID(square.owner).logo;
             } else {
                 for(var o = 0; o < 9; o++) {
                     var cell = square.cells[o];
                     html += o % 3 == 0 ? "<div class = 'row'>" : "";
-                    html += "<div class = 'cell " + (cell.owner != undefined ? "taken" : "") + "' data-owner = '" + (cell.owner != undefined ? cell.owner.id : 0) + "' data-cell-order = '" + o + "'  data-square-order = '" + i + "'" + (isSelectable ? "onclick = 'events.onCellSelect(this, t3.Game);'" : "") + ">" + (cell.owner != undefined ? cell.owner.logo : "") + "</div>";
+                    html += "<div class = 'cell " + (cell.owner != undefined ? "taken" : "") + "' data-owner = '" + (cell.owner != undefined ? cell.owner : 0) + "' data-cell-order = '" + o + "'  data-square-order = '" + i + "'" + (isSelectable ? "onclick = 'events.onCellSelect(this, t3.Game);'" : "") + ">" + (cell.owner != undefined ? t3.Game.getPlayerByID(cell.owner).logo : "") + "</div>";
                     html += (o + 1) % 3 == 0 ? "</div>" : "";
                 }
             }
