@@ -16,7 +16,7 @@ var component = {
         };
 
         component.Game.prototype.getNonuserPlayer = function() {
-            if(this.player1 == t3.User.id) {
+            if(this.player1.id == t3.User.id) {
                 return this.player2;
             }
             return this.player1;

@@ -33,6 +33,9 @@ var events = {
     },
 
     onCellSelect: function(e, game) {
+        //TODO do not continue if not your turn, or processing turn
+
+
         var cellIndex = parseInt(e.dataset.cellOrder);
         var squareIndex = parseInt(e.dataset.squareOrder);
         var player = game.getCurrentPlayer();
@@ -47,6 +50,7 @@ var events = {
         // Check if this move won the square for the player
         var wonSquare = false;
         var wonGame = false;
+
         var colCheck = cellIndex % 3;
         var rowCheck = Math.floor(cellIndex / 3) * 3;
         if((square.cells[colCheck].owner == player && square.cells[colCheck + 3].owner == player && square.cells[colCheck + 6].owner == player) ||
@@ -67,12 +71,22 @@ var events = {
                 wonGame = true;
             game.winner = player;
         }
+        var params = [
+            "NEXT_TURN", game.turn, 
+            "CELL_ID", cell.id, 
+            "SQUARE_ID", square.id, 
+            "GAME_ID", game.id, 
+            "NEXT_SQUARE", game.nextSquare, 
+            "PLAYER_ID", t3.User.id, 
+            "OPPONENT_ID", game.getNonuserPlayer().id, 
+            "TOOK_SQUARE", wonSquare, 
+            "WON_GAME", wonGame
+        ];
         t3.callServer("TAKE_TURN", function(data) {
             console.log(data);
             // start polling
-
   
-        }, ["NEXT_TURN", game.turn, "CELL_ID", cell.id, "SQUARE_ID", square.id, "GAME_ID", game.id, "ORDER", cell.order, "PLAYER_ID", t3.User.id, "OPPONENT_ID", game.getNonuserPlayer().id, "TOOK_SQUARE", wonSquare, "WON_GAME", wonGame]);
+        }, params);
         t3.buildBoard();
     },
 

@@ -169,35 +169,35 @@
         $retObj->ERROR = "Username/Password could not be authenticated";
     }
 
-    function takeTurn($con, $nextTurnNumber, $cellID, $squareID, $gameID, $cellOrder, $playerID, $opponentID, $tookSquare, $wonGame, &$retObj) {
-        $nextTurnNumber = filter_var($nextTurnNumber, FILTER_SANITIZE_INT);
-        $cellID = filter_var($cellID, FILTER_SANITIZE_INT);
-        $squareID = filter_var($squareID, FILTER_SANITIZE_INT);
-        $gameID = filter_var($gameID, FILTER_SANITIZE_INT);
-        $cellOrder = filter_var($cellOrder, FILTER_SANITIZE_INT);
-        $playerID = filter_var($playerID, FILTER_SANITIZE_INT);
-        $opponentID = filter_var($opponentID, FILTER_SANITIZE_INT);
-        $tookSquare = filter_var($tookSquare, FILTER_SANITIZE_BOOL);
-        $wonGame = filter_var($wonGame, FILTER_SANITIZE_BOOL);
-        $query = "UPDATE Cell WHERE ID = $cellID SET Owner = $playerID";
-        $err = mysqli_error($con);
+    function takeTurn($con, $nextTurnNumber, $cellID, $squareID, $gameID, $nextSquare, $playerID, $opponentID, $tookSquare, $wonGame, &$retObj) {
+        $nextTurnNumber = filter_var($nextTurnNumber, FILTER_SANITIZE_STRING);
+        $cellID = filter_var($cellID, FILTER_SANITIZE_STRING);
+        $squareID = filter_var($squareID, FILTER_SANITIZE_STRING);
+        $gameID = filter_var($gameID, FILTER_SANITIZE_STRING);
+        $nextSquare = filter_var($nextSquare, FILTER_SANITIZE_STRING);
+        $playerID = filter_var($playerID, FILTER_SANITIZE_STRING);
+        $opponentID = filter_var($opponentID, FILTER_SANITIZE_STRING);
+
+        $query = "UPDATE Cell SET Owner = $playerID WHERE ID = $cellID ";
         $result = mysqli_query($con, $query);
+        $err = mysqli_error($con);
         if(strlen($err) > 0) {
             $retObj->ERROR = $err;
             return;
         }
 
         if($tookSquare) {
-            $query = "UPDATE Square WHERE ID = $squareID SET Owner = $playerID";
+            $query = "UPDATE Square SET Owner = $playerID WHERE ID = $squareID ";
             $result = mysqli_query($con, $query);
+            $err = mysqli_error($con);
             if(strlen($err) > 0) {
                 $retObj->ERROR = $err;
                 return;
             }
         }
-
-        $query = "UPDATE Game WHERE ID = $gameID SET TurnNumber = $nextTurnNumber, PlayerTurn = $opponentID" . ($wonGame ? ", Winner = $playerID" : "");
+        $query = "UPDATE Game SET TurnNumber = $nextTurnNumber, PlayerTurn = $opponentID, NextSquare = $nextSquare" . ($wonGame ? ", Winner = $playerID" : "") . " WHERE ID = $gameID";
         $result = mysqli_query($con, $query);
+        $err = mysqli_error($con);
         if(strlen($err) > 0) {
             $retObj->ERROR = $err;
             return;
@@ -212,11 +212,12 @@
 
     }
 
-    function  ($conn, $gameID, $userID, &$retObj) {
+    function getTurns($conn, $gameID, $userID, &$retObj) {
         // TODO TEST FINISH
         $gameID = filter_var($gameID, FILTER_SANITIZE_INT);
         $userID = filter_var($userID, FILTER_SANITIZE_INT);
         $query = "SELECT COUNT(*) FROM Game WHERE ID = $gameID AND $userID = PlayerTurn";
+        $result = mysqli_query($con, $query);
         $err = mysqli_error($con);
         if (strlen($err) > 0) {
             $retObj->ERROR = $err;

@@ -39,12 +39,12 @@
             $cellID = $_GET['CELL_ID'];
             $squareID = $_GET['SQUARE_ID'];
             $gameID = $_GET['GAME_ID'];
-            $cellOrder = $_GET['ORDER'];
+            $nextSquare = $_GET['NEXT_SQUARE'];
             $playerID = $_GET['PLAYER_ID'];
             $opponentID = $_GET['OPPONENT_ID'];
-            $tookSquare = (bool)$_GET['TOOK_SQUARE'];
-            $wonGame = (bool)$_GET['WON_GAME'];
-            takeTurn($con, $nextTurnNumber, $cellID, $squareID, $gameID, $cellOrder, $playerID, $opponentID, $tookSquare, $wonGame, $retObj);
+            $tookSquare = $_GET['TOOK_SQUARE'] == "true";
+            $wonGame = $_GET['WON_GAME'] == "true";
+            takeTurn($con, $nextTurnNumber, $cellID, $squareID, $gameID, $nextSquare, $playerID, $opponentID, $tookSquare, $wonGame, $retObj);
             break;
         default: 
             $retObj->ERROR = "COMMAND UNKNOWN";
