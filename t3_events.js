@@ -13,6 +13,10 @@ var events = {
                 t3.initializeUser();
                 t3.initializeLocalGame();
                 break;  
+            case 'help':
+                t3.hideGroups();
+                document.getElementById("helpMenu").style.display = "block";
+                break;
             case 'createConfirm':
                 this.createUser();
                 break;

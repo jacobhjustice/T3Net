@@ -138,20 +138,21 @@ var t3 = {
     // selectabeOrder indicates the square index for which selectable class should show up, -1 if any square is selectable
     buildBoard: function() {
         var isOver = this.Game.winner != undefined;
-        var isTurn = this.Game.getCurrentPlayer().id == this.User.id;
+        var isTurn = !this.Game.isOnline || this.Game.getCurrentPlayer().id == this.User.id;
         var html = "";
         if(!isOver) {
             if(this.Game.isOnline) {
                 if(isTurn) {
-                    html += "<h3 id = 'header'>It's your turn! Select any of the highlighted squares to move!</h3>";
+                    html += "<h3 id = 'header'>It's your turn! Select any of the highlighted cells to move!</h3>";
                 } else {
+                    t3.pollForGameUpdate();
                     html += "<h3 id = 'header'>Waiting on " + this.Game.getCurrentPlayer().username + " to move.</h3>";
                 }
             } else {
-                html += "<h3 id = 'header'>" + this.Game.getCurrentPlayer().username + "'s Turn! Select any of the highlighted squares to move!</h3>";
+                html += "<h3 id = 'header'>" + this.Game.getCurrentPlayer().username + "'s Turn! Select any of the highlighted cells to move!</h3>";
             }
         } else {
-            html += "<h3 id = 'header'>That's game! The winner is " + this.Game.getPlayerByID(this.Game.winner).username + "!</div>"
+            html += "<h3 id = 'header'>That's game! The winner is " + this.Game.getPlayerByID(this.Game.winner).username + "!</h3>"
         }
         html += "<div id = 't3Table'>";
         
@@ -189,7 +190,33 @@ var t3 = {
             html += (i + 1) % 3 == 0 ? "</div>" : "";
         }
         html += "</div>";
+        html += "<div id = 'key'><b>X:</b> " + t3.Game.player1.username + "<br /><b>O:</b> " + t3.Game.player2.username + " </div>"
         document.getElementById("content").innerHTML = html;
     },
 
+    pollForGameUpdate: function() {
+        if(t3.Game != undefined) {
+            t3.callServer("POLL_TURN", function(data) {
+                data = JSON.parse(data);
+                if(data.ERROR != null) {
+
+                } else {
+                    if(data.DATA == "turn") {
+                        // TODO: Fix to happen within server function
+                        t3.callServer("LOAD_GAME", function(data) {
+                            data = JSON.parse(data);
+                            if(data.ERROR) {
+                                console.log(error);
+                            } else {
+                                t3.loadGame(data.DATA);
+                            }
+                        }, ["GAME_ID", t3.Game.id]);
+                    } else if(data.DATA == "wait") {
+                        // Wait 5 seconds and try again
+                        setTimeout(t3.pollForGameUpdate, 5000);
+                    }
+                }
+            }, ["USER_ID", t3.User.id, "GAME_ID", t3.Game.id]);
+        }
+    }
 };

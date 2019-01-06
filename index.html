@@ -42,6 +42,16 @@
             <div class = "button" onclick = "events.onButtonSelect(this)" id = "randomChallengeConfirm">Random Challenger</div>
             <div id = "gameList"></div>
         </div>
+        <div id = "helpMenu" class = "elementGroup">
+            <h3>What is T<div class = "subscript">3</div>.Net?</h3>
+            <div class = "section">T3Net is a web client I created as a fun little project based off a varient of Tic Tac Toe that I was taught in highschool, which we called Ultimate Tic Tac Toe. The game is pretty simple. The board is a 3x3 board of squares, each made up of 3x3 cells. Wherever you move determines where the other player is allowed to move.</div>
+            <img class = "left" src = "img/step1.PNG" /><div class = "section descriptor"> Whichever cell you play in, will be the square that your opponent will choose from in their turn.</div><img class = "right" src = "img/step2.PNG" />
+            <img class = "left" src = "img/step6.PNG" /><div class = "section descriptor"> Get 3 cells in a row within a square, then that square becomes yours!</div><img class = "right" src = "img/step7.PNG" />
+            <img class = "left" src = "img/step3.PNG" /><div class = "section descriptor"> If the corresponding square is filled up, then your opponent will be able to play in any open cell!</div><img class = "right" src = "img/step4.PNG" />
+            <div class = "section">You win the game by getting 3 squares in a row! You have to think ahead for which squares you need in order to win! If you lose a square, don't fret! You can always use it to your advantage by forcing your opponent to play in a corresponding cell (since it will give you free pick over the board)!</div>
+            <img style = "margin: 0 auto; margin-top: 10px;" src = "img/step5.PNG"/>
+        </div>
+            
         <script>t3.initializeEntry();</script>
     </body>
 </html>

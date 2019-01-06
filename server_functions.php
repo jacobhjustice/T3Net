@@ -189,8 +189,22 @@
         }
     }
 
-    function getLatestMove($conn, $gameID, $turnNum) {
+    function pollTurn($con, $gameID, $userID, &$retObj) {
+        $gameID = filter_var($gameID, FILTER_SANITIZE_STRING);
 
+        // Create the game
+        $query = "SELECT ID FROM Game WHERE ID = $gameID AND PlayerTurn = $userID";
+        $result = mysqli_query($con, $query);        
+        $err = mysqli_error($con);
+        if(strlen($err) > 0) {
+            $retObj->ERROR = $err;
+            return;
+        }
+        if($row = mysqli_fetch_row($result)) {
+            $retObj->DATA = "turn";
+            return;
+        }
+        $retObj->DATA = "wait";
     }
 
     function createUser($con, $username, $password, &$retObj) {  

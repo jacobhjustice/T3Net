@@ -52,6 +52,11 @@
             $wonGame = $_GET['WON_GAME'] == "true";
             takeTurn($con, $nextTurnNumber, $cellID, $squareID, $gameID, $nextSquare, $playerID, $opponentID, $tookSquare, $wonGame, $retObj);
             break;
+        case 'POLL_TURN':
+            $gameID = $_GET['GAME_ID'];
+            $userID = $_GET['USER_ID'];
+            pollTurn($con, $gameID, $userID, $retObj);
+            break;
         default: 
             $retObj->ERROR = "COMMAND UNKNOWN";
     }

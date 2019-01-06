@@ -1,22 +1,34 @@
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
 #backButton {
     width: 150px;
-    height: 35px;
+    height: 25px;
     font-size: 20px;
-    line-height: 35px;
+    line-height: 25px;
     position: absolute;
     top: 0;
     box-sizing: initial;
+    display: none;
+    color: white;
 }
 
 #logoutButton {
     background-color: #aa4040;
     width: 100px;
-    height: 35px;
+    height: 25px;
     font-size: 20px;
-    line-height: 35px;
+    line-height: 25px;
     position: absolute;
     top: 0;
     box-sizing: initial;
+    display: none;
+    color: white;
 }
 
 body {
@@ -28,7 +40,7 @@ body {
     margin: 0 auto;
     width: 405px;
     color: white;
-    margin-top:10%;
+    margin-top: 30px;
     border-radius: 5px;
     padding: 10px;
 }
@@ -39,13 +51,13 @@ body {
     margin-bottom: 20px;
 }
 
-#createMenu, #loginMenu {
+#createMenu, #loginMenu, #helpMenu {
     background-color: white;
     color: black;
     text-align: center;
 }
 
-#createMenu h3, #loginMenu h3 {
+#createMenu h3, #loginMenu h3, #helpMenu h3 {
     margin-top: 0;
 }
 
@@ -60,6 +72,26 @@ body {
 #createMenu #usernameUsedErrorText, #createMenu #authenticationCredsErrorText {
     display: none;
     color: #aa4040;
+}
+
+#helpMenu .section {
+    margin: 0 auto;
+    text-align: center;
+    width: 100%;
+}
+
+#helpMenu .section.descriptor {
+    height: 128px; 
+    margin-top: 20px;
+    font-weight: bold;
+    vertical-align: middle;
+    width: calc(100% - 260px);
+    display: inline-block;
+}
+
+#helpMenu  img {
+    width: 128px;
+    display: inline-block;
 }
 
 .subscript {
@@ -100,7 +132,6 @@ body {
     width: 400px;
     background-color: white;
     margin-bottom: 10px;
-    border: 4px solid gray;
     color: black;
     border-radius: 50px;
 }
@@ -111,7 +142,6 @@ body {
 
 .gameOption.finished {
     color: white;
-    border-color: white;
 }
 
 .gameOption.finished.winner {
@@ -132,6 +162,17 @@ body {
     width: 400px;
     margin: 0 auto;
     display: table;
+}
+
+#key {
+    background-color: white;
+    width: 150px;
+    margin: 0 auto;
+    margin-top: 30px;
+    line-height: 25px;
+    height: 50px;
+    text-align: center;
+    border-radius: 500px;
 }
 
 #header {
@@ -168,6 +209,7 @@ body {
     font-size: 32px;
     text-align: center;
     line-height: 120px;
+    background-color: white;
 }
 
 .row {
