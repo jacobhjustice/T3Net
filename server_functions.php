@@ -22,7 +22,6 @@
         if($retObj->ERROR != null) {
             return;
         }
-        $challengedID = $retObj->DATA;
 
         if($challengedID == $creatorID) {
             $retObj->ERROR = -2;
@@ -30,6 +29,7 @@
         }
 
         // Create the game
+        
         $query = "INSERT INTO Game (Player1, Player2, PlayerTurn, TurnNumber, NextSquare, LastUpdate) VALUES ($creatorID, $challengedID, $creatorID, 0, -1, now());";
         $result = mysqli_query($con, $query);        
         $err = mysqli_error($con);
