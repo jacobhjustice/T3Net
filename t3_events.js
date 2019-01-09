@@ -2,12 +2,10 @@ var events = {
     onButtonSelect: function(e) {
         switch(e.id) {
             case 'login':
-                t3.hideGroups();
-                document.getElementById("loginMenu").style.display = "block";
+                this.loginUser();
                 break;
             case 'create': 
-                t3.hideGroups();
-                document.getElementById("createMenu").style.display = "block";
+                this.createUser();
                 break;
             case 'local':
                 t3.initializeUser();
@@ -15,15 +13,9 @@ var events = {
                 break;  
             case 'help':
                 t3.hideGroups();
+                document.getElementById("backButton").style.display = "block";
+                document.getElementById("backButton").dataset.back = "entry";
                 document.getElementById("helpMenu").style.display = "block";
-                break;
-            case 'createConfirm':
-                this.createUser();
-                break;
-            case 'loginConfirm':
-                this.loginUser();
-                break;
-            case 'randomChallengeConfirm':
                 break;
             case 'challengeConfirm':
                 this.challenge();
@@ -95,8 +87,12 @@ var events = {
     },
 
     createUser: function() {
-        var username = document.getElementById("createUsername").value;
-        var password = document.getElementById("createPassword").value;
+        var elements = document.getElementsByClassName("errorText");
+        for(var i = 0; i < elements.length; i++) {
+            elements[i].style.display = "none";
+        }
+        var username = document.getElementById("username").value;
+        var password = document.getElementById("password").value;
         t3.callServer("CREATE_USER", function(data) {
             data = JSON.parse(data);
             if(data.ERROR != null) {
@@ -110,13 +106,18 @@ var events = {
                 t3.User = user;
                 t3.hideGroups();
                 document.getElementById("challengeMenu").style.display = "block";
+                t3.fetchGames();
             }
         }, ["USERNAME", username, "PASSWORD", password]);
     },
 
     loginUser: function() {
-        var username = document.getElementById("loginUsername").value;
-        var password = document.getElementById("loginPassword").value;
+        var elements = document.getElementsByClassName("errorText");
+        for(var i = 0; i < elements.length; i++) {
+            elements[i].style.display = "none";
+        }
+        var username = document.getElementById("username").value;
+        var password = document.getElementById("password").value;
         t3.callServer("AUTHENTICATE_USER", function(data) {
             data = JSON.parse(data);
             if(data.ERROR != null) {
@@ -163,11 +164,22 @@ var events = {
         }, ["GAME_ID", id]);
     },
 
-    onClickBack: function() {
+    onClickBack: function(e) {
         t3.Game = undefined;
         t3.hideGroups();
-        document.getElementById("challengeMenu").style.display = "block";
-        t3.fetchGames();
+        var key = e.dataset.back;
+        if(key == "menu") {
+            document.getElementById("challengeMenu").style.display = "block";
+            t3.fetchGames();
+        } else if(key == "entry") {
+            document.getElementById("entryOptions").style.display = "block";
+        } else if(key == "board") {
+            document.getElementById("content").style.display = "block";
+            document.getElementById("backButton").style.display = "block";
+            document.getElementById("backButton").dataset.back = "menu";
+            t3.buildBoard()
+        }
+        
     },
 
     onClickLogout: function() {

@@ -132,6 +132,7 @@ var t3 = {
         this.hideGroups();
         document.getElementById("content").style.display = "block";
         document.getElementById("backButton").style.display = "block";
+        document.getElementById("backButton").dataset.back = "menu";
         this.buildBoard();
     },
 

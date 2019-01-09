@@ -6,20 +6,27 @@
     <body>
         
         <div id = "content" class = "elementGroup"></div>
-        <div id = "backButton" class = "button elementGroup" onclick = "events.onClickBack()">Back to Menu</div>
+        <div id = "backButton" data-back = "none" class = "button elementGroup" onclick = "events.onClickBack(this)">Back to Menu</div>
         <div id = "logoutButton" class = "button elementGroup" onclick = "events.onClickLogout()">Logout</div>
         <script src = "t3_components.js"></script>
         <script src = "t3_events.js"></script>
         <script src = "t3.js"></script>
         <link rel = "stylesheet" href= "t3.css"></link>
         <div id = "entryOptions" class = "elementGroup">
-            <h2>T<div class = "subscript">3</div>.Net</h2>
-            <div class = "button" onclick = "events.onButtonSelect(this)" id = "login">Login</div>
-            <div class = "button" onclick = "events.onButtonSelect(this)" id = "create">Create Account</div>
+            <h1>T<div class = "subscript">3</div>.Net</h2>
             <div class = "button" onclick = "events.onButtonSelect(this)" id = "help">What is T3.Net?</div>
             <div class = "button" onclick = "events.onButtonSelect(this)" id = "local">Local Play</div>
+            <div id = "loginBox">
+                <h3>Login or Create an Account</h3>
+                <label class = "errorText" for = "username" id = "usernameUsedErrorText" style = "display: none;">This username is already taken. Please try another one!</label>
+                <label class = "errorText"  for = "username" id = "authenticationCredsErrorText" style = "display: none;">The provided credentials do not match our records.</label>
+                <input id = "username" placeholder="Username"/>
+                <input id = "password" type = "password" placeholder="Password"/>
+                <div class = "button confirm" onclick = "events.onButtonSelect(this)" id = "login">Login</div>
+                <div class = "button confirm" onclick = "events.onButtonSelect(this)" id = "create">Create Account</div>
+            </div>
         </div>
-        <div id = "createMenu" class = "elementGroup">
+        <!-- <div id = "createMenu" class = "elementGroup">
             <h3>Create Account</h3>
             <label for = "createUsername" id = "usernameUsedErrorText" style = "display: none;">This username is already taken. Please try another one!</label>
             <input id = "createUsername" placeholder="Username"/>
@@ -34,17 +41,36 @@
             <input id = "loginPassword" type = "password" placeholder="Password"/>
             <div class = "tagline" onclick = "events.onButtonSelect(create)">Don't have an account? Click here!</div>
             <div class = "button confirm" onclick = "events.onButtonSelect(this)" id = "loginConfirm">Login</div>
-        </div>
+        </div> -->
         <div id = "challengeMenu" class = "elementGroup">
-            <h3>Challenge a User</h3>
+            <!-- <h3>Select a Game or Challenge a User</h3>
             <input id = "challengeUsername" placeholder="Username"/>
             <div class = "button confirm" onclick = "events.onButtonSelect(this)" id = "challengeConfirm">Challenge User</div>
-            <div class = "button" onclick = "events.onButtonSelect(this)" id = "randomChallengeConfirm">Random Challenger</div>
-            <div id = "gameList"></div>
+            <div id = "gameWrapper">
+                <div id = "gameList"></div>
+            </div> -->
+            <div id = "splitWrap">
+                <div class = "split">
+                    <h1>Challenge a User</h3>
+                    <input id = "challengeUsername" placeholder="Username"/>
+                    <div class = "button confirm" onclick = "events.onButtonSelect(this)" id = "challengeConfirm">Challenge User</div>
+                </div>
+                <div class = "borderWrap">
+                    <div class = "border"></div>
+                    <div class = "splitText">or</div>
+                    <div class = "border"></div>
+                </div>
+                <div class = "split">
+                    <h1>Select a Game</h3>
+                    <div id = "gameWrapper">
+                        <div id = "gameList"></div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div id = "helpMenu" class = "elementGroup">
             <h3>What is T<div class = "subscript">3</div>.Net?</h3>
-            <div class = "section">T3Net is a web client I created as a fun little project based off a varient of Tic Tac Toe that I was taught in highschool, which we called Ultimate Tic Tac Toe. The game is pretty simple. The board is a 3x3 board of squares, each made up of 3x3 cells. Wherever you move determines where the other player is allowed to move.</div>
+            <div class = "section">T3Net is a web client I created as a fun little project based off a varient of Tic Tac Toe that I was taught in highschool. The game is pretty simple. The board is a 3x3 board of squares, each made up of 3x3 cells. Wherever you move determines where the other player is allowed to move.</div>
             <img class = "left" src = "img/step1.PNG" /><div class = "section descriptor"> Whichever cell you play in, will be the square that your opponent will choose from in their turn.</div><img class = "right" src = "img/step2.PNG" />
             <img class = "left" src = "img/step6.PNG" /><div class = "section descriptor"> Get 3 cells in a row within a square, then that square becomes yours!</div><img class = "right" src = "img/step7.PNG" />
             <img class = "left" src = "img/step3.PNG" /><div class = "section descriptor"> If the corresponding square is filled up, then your opponent will be able to play in any open cell!</div><img class = "right" src = "img/step4.PNG" />

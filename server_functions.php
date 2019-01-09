@@ -1,33 +1,24 @@
 <?php
-    function findUser($con, $username, &$retObj) {
-        $username = filter_var($username, FILTER_SANITIZE_STRING);
-        $query = "SELECT ID FROM Account WHERE Username = '$username'";
+    function createGame($con, $creatorID, $challengedName, &$retObj) {
+        $creatorID = filter_var($creatorID, FILTER_SANITIZE_STRING);
+        $challengedName = filter_var($challengedName, FILTER_SANITIZE_STRING);
+        $challengedID = 0;
+        // Confirm challengee exists
+        $query = "SELECT ID FROM Account WHERE Username = '$challengedName'";
         $result = mysqli_query($con, $query);
-
-        // Check to make sure username does not exist already
         $err = mysqli_error($con);
         if(strlen($err) > 0) {
             $retObj->ERROR = $err;
             return;
         }
+
         if($row = mysqli_fetch_row($result)){
-            $retObj->DATA = $row[0];
+            $challengedID = $row[0];
+        } else {
+            $retObj->ERROR = "Not found";
             return;
         }
-        $retObj->ERROR = -1;
-    }
-
-
-// ALL FUNC
-
-
-// TODO: loadGame, createGameRandom, 
-    function createGame($con, $creatorID, $challengedName, &$retObj) {
-        $creatorID = filter_var($creatorID, FILTER_SANITIZE_STRING);
-        $challengedName = filter_var($challengedName, FILTER_SANITIZE_STRING);
-        
-        // Confirm challengee exists
-        findUser($con, $challengedName, $retObj);
+    
         if($retObj->ERROR != null) {
             return;
         }
@@ -127,13 +118,13 @@
         if($row = mysqli_fetch_assoc($result)) {
             $player1Object = (object)[
                 'ID' => $row['P1ID'],
-                'Logo' => 'O',
+                'Logo' => 'X',
                 'Username' => $row['P1Username']
             ];
     
             $player2Object = (object)[
                 'ID' => $row['P2ID'],
-                'Logo' => 'X',
+                'Logo' => 'O',
                 'Username' => $row['P2Username']
             ];
     
@@ -320,18 +311,4 @@
         $retObj->DATA = $retArray;
         return;
     }
-
-    // function getTurns($conn, $gameID, $userID, &$retObj) {
-    //     // TODO TEST FINISH
-    //     $gameID = filter_var($gameID, FILTER_SANITIZE_INT);
-    //     $userID = filter_var($userID, FILTER_SANITIZE_INT);
-    //     $query = "SELECT COUNT(*) FROM Game WHERE ID = $gameID AND $userID = PlayerTurn";
-    //     $result = mysqli_query($con, $query);
-    //     $err = mysqli_error($con);
-    //     if (strlen($err) > 0) {
-    //         $retObj->ERROR = $err;
-    //         return;
-    //     }
-    //     //$retObj->DATA = $
-    // }
 ?>
