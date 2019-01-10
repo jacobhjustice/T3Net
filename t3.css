@@ -88,7 +88,7 @@ body {
 }
 
 .elementGroup h3 {
-    margin-top: 0;
+    margin: 0;
 }
 
 .elementGroup input {
@@ -99,7 +99,13 @@ body {
     margin-top: 15px;
 }
 
-.elementGroup #usernameUsedErrorText, .elementGroup #authenticationCredsErrorText {
+.errorWrap {
+    height: 20px;
+    overflow-y: hidden;
+    width: 100%;
+}
+
+.errorText {
     display: none;
     color: #aa4040;
 }
@@ -152,7 +158,7 @@ body {
     height: 400px;
 }
 
-#challengeUsername {
+#challengeError {
     margin-top: 100px;
 }
 

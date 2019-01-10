@@ -200,7 +200,7 @@ var t3 = {
             t3.callServer("POLL_TURN", function(data) {
                 data = JSON.parse(data);
                 if(data.ERROR != null) {
-
+                    console.log(error);
                 } else {
                     if(data.DATA == "turn") {
                         // TODO: Fix to happen within server function

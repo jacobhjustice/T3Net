@@ -10,6 +10,8 @@ var events = {
             case 'local':
                 t3.initializeUser();
                 t3.initializeLocalGame();
+                document.getElementById("backButton").dataset.back = "entry";
+                document.getElementById("backButton").style.display = "block";
                 break;  
             case 'help':
                 t3.hideGroups();
@@ -29,13 +31,13 @@ var events = {
     },
 
     onCellSelect: function(e, game) {
-        //TODO do not continue if not your turn, or processing turn
-
-
         var cellIndex = parseInt(e.dataset.cellOrder);
         var squareIndex = parseInt(e.dataset.squareOrder);
         var player = game.getCurrentPlayer();
-
+        if(player.id != t3.User.id) {
+            console.log("NOT OYUR TURN");
+            return;
+        }
         // Update DB With player choice, game's turn ++,
         var square = game.squares[squareIndex];
         var cell = square.cells[cellIndex];
@@ -141,10 +143,13 @@ var events = {
 
     challenge: function() {
         var user = document.getElementById("challengeUsername").value;
+        document.getElementById("challengeError").style.display = "none";
         t3.callServer("CREATE_GAME", function(data) {
             data = JSON.parse(data);
             if(data.ERROR != null) {
-
+                if(data.ERROR == "Not found") {
+                    document.getElementById("challengeError").style.display = "block";
+                }
             } else {
                 t3.loadGame(data.DATA);
             }

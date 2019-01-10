@@ -18,40 +18,21 @@
             <div class = "button" onclick = "events.onButtonSelect(this)" id = "local">Local Play</div>
             <div id = "loginBox">
                 <h3>Login or Create an Account</h3>
-                <label class = "errorText" for = "username" id = "usernameUsedErrorText" style = "display: none;">This username is already taken. Please try another one!</label>
-                <label class = "errorText"  for = "username" id = "authenticationCredsErrorText" style = "display: none;">The provided credentials do not match our records.</label>
+                <div class = "errorWrap">
+                    <label class = "errorText" for = "username" id = "usernameUsedErrorText">This username is already taken. Please try another one!</label>
+                    <label class = "errorText"  for = "username" id = "authenticationCredsErrorText">The provided credentials do not match our records.</label>
+                </div>
                 <input id = "username" placeholder="Username"/>
                 <input id = "password" type = "password" placeholder="Password"/>
                 <div class = "button confirm" onclick = "events.onButtonSelect(this)" id = "login">Login</div>
                 <div class = "button confirm" onclick = "events.onButtonSelect(this)" id = "create">Create Account</div>
             </div>
         </div>
-        <!-- <div id = "createMenu" class = "elementGroup">
-            <h3>Create Account</h3>
-            <label for = "createUsername" id = "usernameUsedErrorText" style = "display: none;">This username is already taken. Please try another one!</label>
-            <input id = "createUsername" placeholder="Username"/>
-            <input id = "createPassword" type = "password" placeholder="Password"/>
-            <div class = "tagline" onclick = "events.onButtonSelect(login)">Already have an account? Click here!</div>
-            <div class = "button confirm" onclick = "events.onButtonSelect(this)" id = "createConfirm">Create</div>
-        </div>
-        <div id = "loginMenu" class = "elementGroup">
-            <h3>Login</h3>
-            <label for = "loginUsername" id = "authenticationCredsErrorText" style = "display: none;">The provided credentials do not match our records.</label>
-            <input id = "loginUsername" placeholder="Username"/>
-            <input id = "loginPassword" type = "password" placeholder="Password"/>
-            <div class = "tagline" onclick = "events.onButtonSelect(create)">Don't have an account? Click here!</div>
-            <div class = "button confirm" onclick = "events.onButtonSelect(this)" id = "loginConfirm">Login</div>
-        </div> -->
         <div id = "challengeMenu" class = "elementGroup">
-            <!-- <h3>Select a Game or Challenge a User</h3>
-            <input id = "challengeUsername" placeholder="Username"/>
-            <div class = "button confirm" onclick = "events.onButtonSelect(this)" id = "challengeConfirm">Challenge User</div>
-            <div id = "gameWrapper">
-                <div id = "gameList"></div>
-            </div> -->
             <div id = "splitWrap">
                 <div class = "split">
                     <h1>Challenge a User</h3>
+                    <label class = "errorText"  for = "challengeUsername" id = "challengeError">The user does not exist.</label>
                     <input id = "challengeUsername" placeholder="Username"/>
                     <div class = "button confirm" onclick = "events.onButtonSelect(this)" id = "challengeConfirm">Challenge User</div>
                 </div>
