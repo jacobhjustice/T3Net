@@ -1,8 +1,17 @@
 var t3 = {
+    // When a game is currently being played, this variable will hold information as defined in component.Game in t3_components.js.
     Game: undefined,
-    User: undefined,
-    CurrentGames: undefined,
 
+    // When a user is logged in, this variable will hold information as defined in component.Account in t3_components.js.
+    User: undefined,
+
+    /**
+     * Make server requests for the t3 application.
+     * 
+     * @param {string}      func            The function identifier which will be used in server_requests.php to call the desired function.
+     * @param {function}    callback        The function to be ran with results from the server.
+     * @param {array}       paramArray      An array of paramaters to be included in the server request. The array is formatted with alternating [{paramater name}, {value},...].
+     */
     callServer: function(func, callback, paramArray) {
 
         http = new XMLHttpRequest();
@@ -26,9 +35,11 @@ var t3 = {
         http.send();
     },
 
+    /**
+     * Request a list of current games from the server and displays them in the "gameList" element.
+     */
     fetchGames: function() {
         t3.callServer("FETCH_GAMES", function(data) {
-            // TODO Empty view for no games or error
             data = JSON.parse(data);
             if(data.ERROR != null) {
                 console.log(data.ERROR);
@@ -65,6 +76,9 @@ var t3 = {
         }, ["USER_ID", t3.User.id]);
     },
 
+    /**
+     * Hide all HTML elements with the "elementGroup" class.
+     */
     hideGroups: function() {
         var elements = document.getElementsByClassName("elementGroup");
         for(var i = 0; i < elements.length; i++) {
@@ -72,25 +86,23 @@ var t3 = {
         }
     },
 
+    /**
+     * A utility function load the entry page.
+     */
     initializeEntry: function() {
         this.hideGroups();
         component.BindGameFunctions();
         document.getElementById("entryOptions").style.display = "block";
     },
 
-    // Create new user
-    initializeUser: function() {
-        var name = "Player 1";
-        var nextID = 1;
-        // Should create on backend and send results
-        var user = new component.Account(nextID, name, "X");
-        this.User = user;
-    },
-
+    /**
+     * Create a game with dummy data to be played client-side only.
+     */
     initializeLocalGame: function() {
         var dummyUser = new component.Account(1, "Player 1", "X");
         var dummyUser2 = new component.Account(2, "Player 2", "O");
         this.Game = new component.Game(0, dummyUser, dummyUser2, 0, [], -1);
+        this.User = dummyUser;
         this.Game.isOnline = false;
         for(var i = 0; i < 9; i++) {
             var square_id = i;
@@ -107,9 +119,12 @@ var t3 = {
         this.buildBoard();
     },
 
-    // Retrieve data from server, call render
+    /**
+     * Use data from the server in order to create a local component.Game object.
+     * 
+     * @param {object}      Information used to initialize Game, Squares, and Cells.    
+     */
     loadGame: function(data) {
-        // Load game/player information from server data. If Player1 is Null, then assume the current user is player1
         var Player1;
         if(data.Player1 != null) {
             Player1 = new component.Account(data.Player1.ID, data.Player1.Username, data.Player1.Logo); 
@@ -136,7 +151,9 @@ var t3 = {
         this.buildBoard();
     },
 
-    // selectabeOrder indicates the square index for which selectable class should show up, -1 if any square is selectable
+    /**
+     * Use the t3.Game object to create an HTML game board.
+     */
     buildBoard: function() {
         var isOver = this.Game.winner != undefined;
         var isTurn = !this.Game.isOnline || this.Game.getCurrentPlayer().id == this.User.id;
@@ -163,14 +180,8 @@ var t3 = {
             var squareClassList = "square ";
             var isSelectable = (this.Game.nextSquare == -1 || i == this.Game.nextSquare) && !isOver && isTurn;
             var square = this.Game.squares[i];
-
-            // consider just having 2 cases for html += based on square.owner
-            // may still want to show the underlying cells even on square own?
             if(isSelectable) {
                 squareClassList += "selectable current ";
-                // if(this.Game.nextSquare > -1) {
-                //     squareClassList += "current ";
-                // }
             }
             if(square.owner != undefined) {
                 squareClassList += "taken "
@@ -183,7 +194,7 @@ var t3 = {
                 for(var o = 0; o < 9; o++) {
                     var cell = square.cells[o];
                     html += o % 3 == 0 ? "<div class = 'row'>" : "";
-                    html += "<div class = 'cell " + (cell.owner != undefined ? "taken" : "") + "' data-owner = '" + (cell.owner != undefined ? cell.owner : 0) + "' data-cell-order = '" + o + "'  data-square-order = '" + i + "'" + (isSelectable ? "onclick = 'events.onCellSelect(this, t3.Game);'" : "") + ">" + (cell.owner != undefined ? t3.Game.getPlayerByID(cell.owner).logo : "") + "</div>";
+                    html += "<div class = 'cell " + (cell.owner != undefined ? "taken" : "") + "' data-owner = '" + (cell.owner != undefined ? cell.owner : 0) + "' data-cell-order = '" + o + "'  data-square-order = '" + i + "'" + (isSelectable ? "onclick = 'events.onCellSelect(this);'" : "") + ">" + (cell.owner != undefined ? t3.Game.getPlayerByID(cell.owner).logo : "") + "</div>";
                     html += (o + 1) % 3 == 0 ? "</div>" : "";
                 }
             }
@@ -195,6 +206,9 @@ var t3 = {
         document.getElementById("content").innerHTML = html;
     },
 
+    /**
+     * Continuously check to see if any game updates have occured.
+     */
     pollForGameUpdate: function() {
         if(t3.Game != undefined) {
             t3.callServer("POLL_TURN", function(data) {
@@ -203,7 +217,6 @@ var t3 = {
                     console.log(error);
                 } else {
                     if(data.DATA == "turn") {
-                        // TODO: Fix to happen within server function
                         t3.callServer("LOAD_GAME", function(data) {
                             data = JSON.parse(data);
                             if(data.ERROR) {
@@ -213,7 +226,6 @@ var t3 = {
                             }
                         }, ["GAME_ID", t3.Game.id]);
                     } else if(data.DATA == "wait") {
-                        // Wait 5 seconds and try again
                         setTimeout(t3.pollForGameUpdate, 5000);
                     }
                 }

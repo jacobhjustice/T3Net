@@ -1,4 +1,9 @@
 var events = {
+    /**
+     * Determine the desired function when clicking an HTML element with class "button"
+     * 
+     * @param {HTML element} e      The selected element.
+     */
     onButtonSelect: function(e) {
         switch(e.id) {
             case 'login':
@@ -8,7 +13,6 @@ var events = {
                 this.createUser();
                 break;
             case 'local':
-                t3.initializeUser();
                 t3.initializeLocalGame();
                 document.getElementById("backButton").dataset.back = "entry";
                 document.getElementById("backButton").style.display = "block";
@@ -30,22 +34,27 @@ var events = {
 
     },
 
-    onCellSelect: function(e, game) {
+    /**
+     * Process and save the effects of making a move when a cell is selected in game.
+     * 
+     * @param {HTML element} e      The selected element.
+     */
+    onCellSelect: function(e) {
+        var game = t3.Game;
         var cellIndex = parseInt(e.dataset.cellOrder);
         var squareIndex = parseInt(e.dataset.squareOrder);
         var player = game.getCurrentPlayer();
         if(player.id != t3.User.id) {
-            console.log("NOT OYUR TURN");
+            console.log("NOT YoUR TURN");
             return;
         }
-        // Update DB With player choice, game's turn ++,
+
         var square = game.squares[squareIndex];
         var cell = square.cells[cellIndex];
         cell.owner = player.id;
         game.turn++;
         game.nextSquare = game.squares[cellIndex].owner == undefined ? cellIndex : -1;
 
-        // Check if this move won the square for the player
         var wonSquare = false;
         var wonGame = false;
         var pid = player.id;
@@ -58,7 +67,7 @@ var events = {
                 wonSquare = true;
                 square.owner = pid;
         }
-        //square level
+
         colCheck = squareIndex % 3;
         rowCheck = Math.floor(squareIndex / 3) * 3;
         if(wonSquare && 
@@ -82,12 +91,13 @@ var events = {
         ];
         t3.callServer("TAKE_TURN", function(data) {
             console.log(data);
-            // start polling
-  
         }, params);
         t3.buildBoard();
     },
 
+    /**
+     * Create a new account.
+     */
     createUser: function() {
         var elements = document.getElementsByClassName("errorText");
         for(var i = 0; i < elements.length; i++) {
@@ -113,6 +123,9 @@ var events = {
         }, ["USERNAME", username, "PASSWORD", password]);
     },
 
+    /**
+     * Attempt to authenticate an account.
+     */
     loginUser: function() {
         var elements = document.getElementsByClassName("errorText");
         for(var i = 0; i < elements.length; i++) {
@@ -131,9 +144,6 @@ var events = {
                 var id = data.DATA;
                 var user = new component.Account(id, username);
                 t3.User = user;
-
-                // Display processing menu While loading games
-                // Display Challenge menu
                 t3.hideGroups();
                 document.getElementById("challengeMenu").style.display = "block";
                 t3.fetchGames();
@@ -141,6 +151,9 @@ var events = {
         }, ["USERNAME", username, "PASSWORD", password]);
     },
 
+    /**
+     * Attempt to create a new game with a player.
+     */
     challenge: function() {
         var user = document.getElementById("challengeUsername").value;
         document.getElementById("challengeError").style.display = "none";
@@ -156,9 +169,13 @@ var events = {
         }, ["CREATOR_ID", t3.User.id, "CHALLENGED_NAME", user]);
     },
 
+    /**
+     * Load a game that was selected in the game list.
+     * 
+     * @param {HTML element} e      The selected element.
+     */
     onGameSelect: function(e) {
         var id = e.dataset.game;
-        console.log(id);
         t3.callServer("LOAD_GAME", function(data) {
             data = JSON.parse(data);
             if(data.ERROR) {
@@ -169,6 +186,11 @@ var events = {
         }, ["GAME_ID", id]);
     },
 
+    /**
+     * Navigate back to the previous page.
+     * 
+     * @param {HTML element} e      The selected element.
+     */
     onClickBack: function(e) {
         t3.Game = undefined;
         t3.hideGroups();
@@ -187,6 +209,9 @@ var events = {
         
     },
 
+    /**
+     * Logout from the active account and return to the entry page.
+     */
     onClickLogout: function() {
         t3.User = undefined;
         t3.hideGroups();

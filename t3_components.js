@@ -10,11 +10,20 @@ var component = {
         this.isOnline = true;
     },
     
+    /**
+     * Bind member functions for Game
+     */
     BindGameFunctions: function() {
+        /**
+         * Determine and retrieve the current player based on the turn.
+         */
         component.Game.prototype.getCurrentPlayer = function() {
             return this.turn % 2 == 0 ? this.player1 : this.player2;
         };
 
+        /**
+         * Determine and retrieve the player which is not the current user.
+         */
         component.Game.prototype.getNonuserPlayer = function() {
             if(this.player1.id == t3.User.id) {
                 return this.player2;
@@ -22,6 +31,11 @@ var component = {
             return this.player1;
         };
 
+        /**
+         * Determine and retrieve the current player based on a given ID
+         * 
+         * @param {int} id      The numeric identifier for the desired player.
+         */
         component.Game.prototype.getPlayerByID = function(id) {
             if(this.player1.id == id) {
                 return this.player1;
@@ -34,7 +48,6 @@ var component = {
         this.id = ID;
         this.username = Username;
         this.logo = Logo;
-        // Future fields???
     },
 
     Square: function(ID, GameID, LocalOrder, Owner, Cells) {

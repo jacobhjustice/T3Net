@@ -1,9 +1,9 @@
 <?php
+    // Creates all entries for the game within the database.
     function createGame($con, $creatorID, $challengedName, &$retObj) {
         $creatorID = filter_var($creatorID, FILTER_SANITIZE_STRING);
         $challengedName = filter_var($challengedName, FILTER_SANITIZE_STRING);
         $challengedID = 0;
-        // Confirm challengee exists
         $query = "SELECT ID FROM Account WHERE Username = '$challengedName'";
         $result = mysqli_query($con, $query);
         $err = mysqli_error($con);
@@ -18,18 +18,11 @@
             $retObj->ERROR = "Not found";
             return;
         }
-    
-        if($retObj->ERROR != null) {
-            return;
-        }
-
         if($challengedID == $creatorID) {
             $retObj->ERROR = -2;
             return;
         }
 
-        // Create the game
-        
         $query = "INSERT INTO Game (Player1, Player2, PlayerTurn, TurnNumber, NextSquare, LastUpdate) VALUES ($creatorID, $challengedID, $creatorID, 0, -1, now());";
         $result = mysqli_query($con, $query);        
         $err = mysqli_error($con);
@@ -55,7 +48,6 @@
             'Winner' => null,
         ];
 
-        // Create the 9 squares for the game
         for($i = 0; $i < 9; $i++) {
             $query = "INSERT INTO Square (GameID, LocalOrder) VALUES ($gameID, $i);";
             $result = mysqli_query($con, $query);        
@@ -75,7 +67,6 @@
             ];
             array_push($retObj->DATA->Squares, $squareObject);
 
-            // Create each of the cells within the square
             $query = " INSERT INTO Cell (SquareID, GameID, LocalOrder) VALUES ";
             for($o = 0; $o < 9; $o++) {
                 $query .= "($squareID, $gameID, $o)";
@@ -104,10 +95,9 @@
         }
     }
 
+    // Loads the game from the database.
     function loadGame($con, $gameID, &$retObj) {
         $gameID = filter_var($gameID, FILTER_SANITIZE_STRING);
-
-        // Create the game
         $query = "SELECT G.ID, A.ID AS P1ID, A.Username AS P1Username, A2.ID AS P2ID, A2.Username AS P2Username, G.TurnNumber, G.NextSquare, G.Winner FROM Game G LEFT JOIN Account A ON A.ID = G.Player1 LEFT JOIN Account A2 ON A2.ID = G.Player2 WHERE $gameID = G.ID";
         $result = mysqli_query($con, $query);        
         $err = mysqli_error($con);
@@ -147,7 +137,6 @@
             }
 
             while($row2 = mysqli_fetch_assoc($result)) {
-                // TODO Finish
                 $squareID = $row2['ID'];
                 $squareObject = (object)[
                     'ID' => $squareID,
@@ -180,10 +169,9 @@
         }
     }
 
+    // Check the database to see if it is the user's turn in the current game
     function pollTurn($con, $gameID, $userID, &$retObj) {
         $gameID = filter_var($gameID, FILTER_SANITIZE_STRING);
-
-        // Create the game
         $query = "SELECT ID FROM Game WHERE ID = $gameID AND PlayerTurn = $userID";
         $result = mysqli_query($con, $query);        
         $err = mysqli_error($con);
@@ -198,13 +186,13 @@
         $retObj->DATA = "wait";
     }
 
+    // Create a new Account
     function createUser($con, $username, $password, &$retObj) {  
         $password = filter_var($password, FILTER_SANITIZE_STRING);
         $username = filter_var($username, FILTER_SANITIZE_STRING);
         $query = "SELECT * FROM Account WHERE Username = '$username'";
         $result = mysqli_query($con, $query);
 
-        // Check to make sure username does not exist already
         $err = mysqli_error($con);
         if(strlen($err) > 0) {
             $retObj->ERROR = $err;
@@ -215,7 +203,6 @@
             return;
         }
 
-        // Hash the password, create account, and return the ID to the client
         $hash = password_hash($password, PASSWORD_DEFAULT);
         $query = "INSERT INTO Account (Username, Password) VALUES ('$username', '$hash');";
         $result = mysqli_query($con, $query);
@@ -228,13 +215,13 @@
         return;
     }
 
+    // Check to see if the user has entered in the correct credentials.
     function authenticateUser($con, $username, $password, &$retObj) { 
         $password = filter_var($password, FILTER_SANITIZE_STRING);
         $username = filter_var($username, FILTER_SANITIZE_STRING);
         $query = "SELECT ID, PASSWORD FROM Account WHERE Username = '$username'";
         $result = mysqli_query($con, $query);
 
-        // Check to make sure username does not exist already
         $err = mysqli_error($con);
         if(strlen($err) > 0) {
             $retObj->ERROR = $err;
@@ -244,13 +231,13 @@
             if(password_verify($password, $row[1])) {
                 $id = $row[0];
                 $retObj->DATA = $id;
-                // setcookie("T3_USER", $id, time() + 86400);
                 return;
             }
         }
         $retObj->ERROR = "Username/Password could not be authenticated";
     }
 
+    // Update the database to match with a turn that a user made locally.
     function takeTurn($con, $nextTurnNumber, $cellID, $squareID, $gameID, $nextSquare, $playerID, $opponentID, $tookSquare, $wonGame, &$retObj) {
         $nextTurnNumber = filter_var($nextTurnNumber, FILTER_SANITIZE_STRING);
         $cellID = filter_var($cellID, FILTER_SANITIZE_STRING);
@@ -286,8 +273,8 @@
         $retObj->DATA = "success";
     }
 
+    // Retrieve a list games for a user.
     function fetchGames($con, $userID, &$retObj) {
-        // TODO: TEST FINISH
         $userID = filter_var($userID, FILTER_SANITIZE_STRING);
         $query = "SELECT G.ID, G.Player1, G.Player2, A.Username AS Opposer, G.Winner, G.PlayerTurn FROM Game G LEFT JOIN Account A ON (A.ID <> $userID AND A.ID = Player2) OR (A.ID <> $userID AND A.ID = Player1) WHERE (G.Player1 = $userID OR G.Player2 = $userID) ORDER BY LastUpdate DESC";
         $result = mysqli_query($con, $query);
