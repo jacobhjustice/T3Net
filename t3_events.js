@@ -44,8 +44,8 @@ var events = {
         var cellIndex = parseInt(e.dataset.cellOrder);
         var squareIndex = parseInt(e.dataset.squareOrder);
         var player = game.getCurrentPlayer();
-        if(player.id != t3.User.id) {
-            console.log("NOT YoUR TURN");
+        if(game.isOnline && player.id != t3.User.id) {
+            console.log("NOT YOUR TURN");
             return;
         }
 
